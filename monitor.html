@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0A1628">
+<title>Tu Gas — Monitor Repartidor</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   MONITOR — DARK / HIGH CONTRAST
+   ═══════════════════════════════════════ */
+:root {
+  --bg: #050D1A;
+  --bg2: #0A1628;
+  --card: #0F2040;
+  --card-hover: #152A55;
+  --border: rgba(255,255,255,.08);
+  --green: #00E676;
+  --green-glow: rgba(0,230,118,.35);
+  --green-dk: #00B55A;
+  --orange: #FF6D3A;
+  --orange-glow: rgba(255,109,58,.3);
+  --muted: rgba(255,255,255,.4);
+  --text: #FFFFFF;
+  --text2: rgba(255,255,255,.75);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Background grid pattern */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.015) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════
+   HEADER
+   ═══════════════════════════════════════ */
+.header {
+  flex-shrink: 0;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.header-brand {
+  display: flex; align-items: center; gap: 12px;
+}
+.header-brand img {
+  width: 42px; height: 42px; border-radius: 50%;
+  border: 2px solid var(--orange);
+  object-fit: cover;
+  box-shadow: 0 0 16px var(--orange-glow);
+}
+.header-brand-text h1 {
+  font-family: 'Fraunces', serif;
+  font-size: 22px; line-height: 1;
+  color: var(--text);
+}
+.header-brand-text h1 em { color: var(--orange); font-style: normal; }
+.header-brand-text p {
+  font-size: 11px; color: var(--muted); margin-top: 2px;
+  text-transform: uppercase; letter-spacing: .6px; font-weight: 600;
+}
+.header-right {
+  display: flex; align-items: center; gap: 20px;
+}
+.live-indicator {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(0,230,118,.08);
+  border: 1px solid rgba(0,230,118,.25);
+  border-radius: 20px; padding: 6px 14px;
+  font-size: 12px; font-weight: 700; color: var(--green);
+}
+.live-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--green);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.4)} }
+
+.counter-wrap { text-align: center; }
+.counter-num {
+  font-family: 'Fraunces', serif; font-size: 36px;
+  color: var(--green); line-height: 1;
+  text-shadow: 0 0 24px var(--green-glow);
+}
+.counter-lbl { font-size: 10px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .5px; margin-top: 2px; }
+
+.refresh-info { font-size: 11px; color: var(--muted); text-align: right; }
+.next-refresh {
+  font-size: 20px; font-weight: 800; color: var(--orange);
+  text-shadow: 0 0 16px var(--orange-glow);
+}
+
+/* ═══════════════════════════════════════
+   MAIN GRID
+   ═══════════════════════════════════════ */
+.orders-wrap {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+.orders-wrap::-webkit-scrollbar { width: 4px; }
+.orders-wrap::-webkit-scrollbar-thumb { background: rgba(0,230,118,.3); border-radius: 2px; }
+
+.orders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(360px,100%), 1fr));
+  gap: 16px;
+}
+
+/* ═══════════════════════════════════════
+   ORDER CARD
+   ═══════════════════════════════════════ */
+.order-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  animation: cardIn .4s cubic-bezier(.34,1.2,.64,1) both;
+  transition: all .25s;
+}
+.order-card:hover {
+  border-color: rgba(0,230,118,.3);
+  box-shadow: 0 0 24px rgba(0,230,118,.1);
+  transform: translateY(-2px);
+}
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(16px) scale(.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.order-card.leaving {
+  animation: cardOut .4s ease forwards;
+}
+@keyframes cardOut {
+  to { opacity: 0; transform: scale(.9) translateY(-10px); }
+}
+
+/* Card header strip */
+.card-strip {
+  background: linear-gradient(135deg, var(--green-dk) 0%, var(--green) 100%);
+  padding: 10px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-strip-status {
+  font-size: 11px; font-weight: 800; color: #000;
+  text-transform: uppercase; letter-spacing: 1px;
+  display: flex; align-items: center; gap: 6px;
+}
+.card-strip-id {
+  font-size: 12px; font-weight: 800; color: rgba(0,0,0,.7);
+  font-family: monospace; letter-spacing: .5px;
+}
+
+/* Card body */
+.card-body { padding: 16px; }
+
+/* Product highlight — the big text repartidor needs to see */
+.product-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.product-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(0,230,118,.1); border: 1px solid rgba(0,230,118,.25);
+  border-radius: 8px; padding: 6px 12px;
+  font-size: 15px; font-weight: 800; color: var(--green);
+  letter-spacing: .3px;
+}
+.product-tag.agua {
+  background: rgba(14,165,233,.1); border-color: rgba(14,165,233,.25);
+  color: #38BDF8;
+}
+.product-tag-icon { font-size: 16px; }
+
+/* Info rows */
+.info-row {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 13px;
+}
+.info-row:last-child { border-bottom: none; }
+.info-row-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+.info-row-content { flex: 1; }
+.info-row-label { font-size: 9px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); font-weight: 700; margin-bottom: 1px; }
+.info-row-value { color: var(--text2); font-weight: 600; line-height: 1.4; }
+.info-row-value.big { font-size: 15px; font-weight: 800; color: var(--text); }
+
+/* Payment highlight */
+.pago-tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(255,109,58,.12); border: 1px solid rgba(255,109,58,.3);
+  border-radius: 6px; padding: 3px 9px;
+  font-size: 11px; font-weight: 700; color: var(--orange);
+}
+.pago-tag.transfer { background: rgba(59,130,246,.12); border-color: rgba(59,130,246,.3); color: #60A5FA; }
+.pago-tag.vale { background: rgba(245,158,11,.12); border-color: rgba(245,158,11,.3); color: #FCD34D; }
+.pago-tag.alrecibir { background: rgba(139,92,246,.12); border-color: rgba(139,92,246,.3); color: #C4B5FD; }
+
+/* WA button */
+.wa-btn {
+  width: 100%; margin-top: 14px;
+  background: #25D366; color: #fff; border: none;
+  border-radius: 10px; padding: 10px; font-size: 13px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: all .2s; cursor: pointer;
+}
+.wa-btn:hover { background: #1DA851; transform: translateY(-1px); }
+
+/* ═══════════════════════════════════════
+   EMPTY STATE
+   ═══════════════════════════════════════ */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  height: 100%; min-height: 300px; text-align: center; padding: 40px;
+}
+.empty-glow {
+  font-size: 80px; margin-bottom: 20px;
+  filter: drop-shadow(0 0 30px rgba(0,230,118,.5));
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+.empty-title {
+  font-family: 'Fraunces', serif; font-size: 28px;
+  color: var(--green); margin-bottom: 8px;
+  text-shadow: 0 0 20px var(--green-glow);
+}
+.empty-sub { color: var(--muted); font-size: 14px; }
+
+/* ═══════════════════════════════════════
+   FOOTER BAR
+   ═══════════════════════════════════════ */
+.footer-bar {
+  flex-shrink: 0;
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  padding: 10px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 11px; color: var(--muted);
+}
+.footer-bar strong { color: var(--text2); }
+
+/* ═══════════════════════════════════════
+   LOADING STATE
+   ═══════════════════════════════════════ */
+.loading-state {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  height: 100%; gap: 16px;
+}
+.spin { width: 48px; height: 48px; border: 4px solid rgba(0,230,118,.15); border-top-color: var(--green); border-radius: 50%; animation: spin .9s linear infinite; }
+@keyframes spin { to{transform:rotate(360deg)} }
+.loading-state p { color: var(--muted); font-size: 13px; }
+
+/* Responsive */
+@media(max-width:480px) {
+  .header { padding: 12px 16px; }
+  .counter-num { font-size: 28px; }
+  .orders-wrap { padding: 14px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-brand">
+    <img src="https://lh3.googleusercontent.com/d/1vuRrxIAiHdyMlwI69pkrTB07gNGCyJRk" alt="Tu Gas"
+      onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 42 42%22><text y=%2234%22 font-size=%2234%22>🔥</text></svg>'">
+    <div class="header-brand-text">
+      <h1>Tu <em>Gas</em></h1>
+      <p>Monitor Repartidor</p>
+    </div>
+  </div>
+
+  <div class="header-right">
+    <div class="counter-wrap">
+      <div class="counter-num" id="pendCount">—</div>
+      <div class="counter-lbl">Pendientes</div>
+    </div>
+
+    <div class="live-indicator">
+      <div class="live-dot"></div>
+      EN VIVO
+    </div>
+
+    <div class="refresh-info">
+      Actualiza en<br>
+      <span class="next-refresh" id="countdown">—</span>s
+    </div>
+  </div>
+</div>
+
+<!-- ORDERS -->
+<div class="orders-wrap" id="ordersWrap">
+  <div class="loading-state" id="loadingState">
+    <div class="spin"></div>
+    <p>Cargando pedidos pendientes…</p>
+  </div>
+  <div class="orders-grid" id="ordersGrid" style="display:none"></div>
+  <div class="empty-state" id="emptyState" style="display:none">
+    <div class="empty-glow">✅</div>
+    <div class="empty-title">¡Sin pedidos pendientes!</div>
+    <div class="empty-sub">Todos los pedidos han sido despachados o están en ruta.</div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer-bar">
+  <span>Última actualización: <strong id="lastUpdate">—</strong></span>
+  <span>Tu Gas © 2025 — Macul, Santiago</span>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════
+var GAS_URL       = 'https://script.google.com/macros/s/AKfycbzVWWf0qub5_66Jk_vPcICkrwnDf8N5xenbNRNViTtuNS68nRhT2yZTVYxZiZN1_uqn/exec';
+var REFRESH_SECS  = 30;   // auto-refresh interval
+
+var countdown    = REFRESH_SECS;
+var countTimer   = null;
+var currentCards = {};    // { id: cardElement } — track existing cards
+
+// ══════════════════════════════════════════════
+// API
+// ══════════════════════════════════════════════
+function gasCall(accion, params) {
+  var body = Object.assign({ accion: accion }, params || {});
+  return fetch(GAS_URL, {
+    method: 'POST', mode: 'cors',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(body)
+  }).then(function(r){ return r.json(); })
+    .catch(function(e){ return { ok: false, error: e.message }; });
+}
+
+// ══════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════
+function formatProductTags(pedido) {
+  var items = pedido['Items JSON'] || pedido['items_json'] || '';
+  var tags  = [];
+
+  if (items) {
+    try {
+      var arr = JSON.parse(items);
+      arr.forEach(function(i) {
+        var tipo  = i.tipo_servicio || 'gas';
+        var label = '';
+        if (tipo === 'agua') {
+          label = '💧 ' + (i.nombre || 'Agua') + ' ×' + i.cantidad;
+          tags.push({ label: label, cls: 'agua' });
+        } else {
+          // Format: "PENDIENTE 15KG AB" style
+          var marca   = i.marca || '';
+          var marcaAb = marca.toLowerCase().includes('abastible') ? 'AB' : marca.toLowerCase().includes('gasco') ? 'GAS' : marca.substring(0,3).toUpperCase();
+          var kg      = i.kg || '';
+          label = 'PENDIENTE ' + kg + 'KG ' + marcaAb + ' ×' + i.cantidad;
+          tags.push({ label: label, cls: '' });
+        }
+      });
+    } catch(e) { tags.push({ label: items, cls: '' }); }
+  } else {
+    // Fallback from flat columns
+    var marca  = pedido['Marca'] || '';
+    var kg     = pedido['KG'] || '';
+    var cant   = pedido['Cantidad'] || 1;
+    var marcaAb = marca.toLowerCase().includes('abastible') ? 'AB' : marca.toLowerCase().includes('gasco') ? 'GAS' : marca.substring(0,3).toUpperCase();
+    if (kg) tags.push({ label: 'PENDIENTE ' + kg + 'KG ' + marcaAb + ' ×' + cant, cls: '' });
+    else tags.push({ label: pedido['Resumen Items'] || '—', cls: '' });
+  }
+  return tags;
+}
+
+function pagoTag(pago) {
+  var cls = 'pago-tag';
+  if (!pago) return '<span class="' + cls + '">—</span>';
+  var p = pago.toLowerCase();
+  if (p.includes('transf'))   cls += ' transfer';
+  else if (p.includes('vale')) cls += ' vale';
+  else if (p.includes('recibir')) cls += ' alrecibir';
+  return '<span class="' + cls + '">' + pago + '</span>';
+}
+
+function fmtClp(v) { return '$' + (parseInt(v) || 0).toLocaleString('es-CL'); }
+
+function nowStr() {
+  return new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+}
+
+// ══════════════════════════════════════════════
+// RENDER CARD
+// ══════════════════════════════════════════════
+function buildCardHTML(p) {
+  var id     = p['ID Pedido'] || p['Pedido ID'] || '—';
+  var nombre = p['Nombre Cliente'] || '—';
+  var tel    = p['Teléfono'] || '—';
+  var dir    = p['Dirección'] || '—';
+  var pago   = p['Método Pago'] || p['Metodo Pago'] || '';
+  var total  = fmtClp(p['Total'] || 0);
+  var obs    = p['Observaciones'] || '';
+  var tags   = formatProductTags(p);
+
+  var tagsHtml = tags.map(function(t) {
+    return '<span class="product-tag ' + t.cls + '"><span class="product-tag-icon">🔥</span>' + t.label + '</span>';
+  }).join('');
+
+  return '<div class="card-strip">'
+    + '<div class="card-strip-status">● PENDIENTE</div>'
+    + '<div class="card-strip-id">' + id + '</div>'
+    + '</div>'
+    + '<div class="card-body">'
+    + '<div class="product-tags">' + tagsHtml + '</div>'
+    + '<div class="info-row">'
+    + '<span class="info-row-icon">👤</span>'
+    + '<div class="info-row-content"><div class="info-row-label">Cliente</div><div class="info-row-value big">' + nombre + '</div></div>'
+    + '</div>'
+    + '<div class="info-row">'
+    + '<span class="info-row-icon">📍</span>'
+    + '<div class="info-row-content"><div class="info-row-label">Dirección</div><div class="info-row-value">' + dir + '</div></div>'
+    + '</div>'
+    + '<div class="info-row">'
+    + '<span class="info-row-icon">💳</span>'
+    + '<div class="info-row-content"><div class="info-row-label">Pago · Total</div>'
+    + '<div class="info-row-value">' + pagoTag(pago) + ' <strong style="color:var(--orange);font-size:16px;margin-left:8px">' + total + '</strong></div>'
+    + '</div></div>'
+    + (obs ? '<div class="info-row"><span class="info-row-icon">📝</span><div class="info-row-content"><div class="info-row-label">Nota</div><div class="info-row-value">' + obs + '</div></div></div>' : '')
+    + '<button class="wa-btn" onclick="contactWA(\'' + encodeURIComponent(tel) + '\',\'' + encodeURIComponent(id) + '\')">📲 WhatsApp — ' + tel + '</button>'
+    + '</div>';
+}
+
+function contactWA(tel, id) {
+  var t = decodeURIComponent(tel).replace(/\D/g,'');
+  if (t && !t.startsWith('56')) t = '56' + t;
+  var msg = 'Hola, soy el repartidor de Tu Gas. Voy en camino con tu pedido ' + decodeURIComponent(id) + ' 🚚';
+  window.open('https://wa.me/' + t + '?text=' + encodeURIComponent(msg), '_blank');
+}
+
+// ══════════════════════════════════════════════
+// FETCH & RENDER
+// ══════════════════════════════════════════════
+function fetchPedidos() {
+  gasCall('getPedidosFiltrados', { filtros: { estado: 'Pendiente' } })
+    .then(function(res) {
+      document.getElementById('loadingState').style.display = 'none';
+
+      var pedidos = (res && Array.isArray(res.pedidos))
+        ? res.pedidos.filter(function(p){ return p['Estado'] === 'Pendiente'; })
+        : [];
+
+      renderPedidos(pedidos);
+      document.getElementById('lastUpdate').textContent = nowStr();
+    })
+    .catch(function() {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('lastUpdate').textContent = 'Error — ' + nowStr();
+    });
+}
+
+function renderPedidos(pedidos) {
+  var grid      = document.getElementById('ordersGrid');
+  var emptyEl   = document.getElementById('emptyState');
+  var countEl   = document.getElementById('pendCount');
+
+  countEl.textContent = pedidos.length;
+
+  if (pedidos.length === 0) {
+    grid.style.display = 'none';
+    emptyEl.style.display = 'flex';
+    currentCards = {};
+    return;
+  }
+
+  grid.style.display  = '';
+  emptyEl.style.display = 'none';
+
+  // Build set of incoming IDs
+  var incomingIds = {};
+  pedidos.forEach(function(p) { incomingIds[p['ID Pedido'] || ''] = p; });
+
+  // Remove cards that are no longer pending
+  Object.keys(currentCards).forEach(function(id) {
+    if (!incomingIds[id]) {
+      var card = currentCards[id];
+      card.classList.add('leaving');
+      setTimeout(function(){ if (card.parentNode) card.parentNode.removeChild(card); }, 400);
+      delete currentCards[id];
+    }
+  });
+
+  // Add new cards (not already shown)
+  pedidos.forEach(function(p, idx) {
+    var id = p['ID Pedido'] || '';
+    if (!currentCards[id]) {
+      var div = document.createElement('div');
+      div.className = 'order-card';
+      div.id = 'card_' + id;
+      div.style.animationDelay = (idx * 0.06) + 's';
+      div.innerHTML = buildCardHTML(p);
+      grid.appendChild(div);
+      currentCards[id] = div;
+    } else {
+      // Update existing card content (in case total/obs changed)
+      currentCards[id].innerHTML = buildCardHTML(p);
+    }
+  });
+}
+
+// ══════════════════════════════════════════════
+// COUNTDOWN TIMER
+// ══════════════════════════════════════════════
+function startCountdown() {
+  countdown = REFRESH_SECS;
+  clearInterval(countTimer);
+  countTimer = setInterval(function() {
+    countdown--;
+    document.getElementById('countdown').textContent = countdown;
+    if (countdown <= 0) {
+      countdown = REFRESH_SECS;
+      fetchPedidos();
+    }
+  }, 1000);
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function() {
+  fetchPedidos();
+  startCountdown();
+
+  // Keep screen awake (best-effort)
+  if ('wakeLock' in navigator) {
+    navigator.wakeLock.request('screen').catch(function(){});
+  }
+
+  // Click countdown to refresh now
+  document.getElementById('countdown').addEventListener('click', function() {
+    countdown = REFRESH_SECS;
+    fetchPedidos();
+  });
+});
+</script>
+</body>
+</html>
