@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#E8521A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tu Gas">
+<meta name="description" content="Distribuidora oficial Abastible y Gasco en Santiago. Pedidos online con entrega rápida.">
+<link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/1vuRrxIAiHdyMlwI69pkrTB07gNGCyJR">
+<title>Tu Gas — Tienda Online</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   TU GAS v6.0 — DESIGN TOKENS
+   ═══════════════════════════════════════════════ */
+:root {
+  /* Brand Colors */
+  --fire: #E8521A;
+  --fire-dk: #C43D0E;
+  --fire-lt: #FF7043;
+  --fire-pale: #FFF1EC;
+
+  /* Secondary (Water/Blue) */
+  --agua: #0EA5E9;
+  --agua-dk: #0284C7;
+  --agua-pale: #F0F9FF;
+
+  /* Neutrals */
+  --navy: #1A3A6B;
+  --sky: #1A73E8;
+  --dark: #0F172A;
+  --dark2: #1E293B;
+  --surface: #F8F7F4;
+  --card: #FFF;
+  --border: #E2E8F0;
+  --text: #1E293B;
+  --muted: #64748B;
+
+  /* Status */
+  --success: #22C55E;
+  --warn: #F59E0B;
+  --danger: #EF4444;
+  --info: #06B6D4;
+
+  /* Radii */
+  --r: 12px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+
+  /* Shadows */
+  --shadow: 0 4px 24px rgba(0,0,0,.09);
+  --shadow-lg: 0 20px 60px rgba(0,0,0,.16);
+
+  /* Safe areas (iOS notch) */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bot: env(safe-area-inset-bottom, 0px);
+}
+
+/* ═══════════════════════════════════════════════
+   BASE RESET
+   ═══════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--surface);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+img { display: block; max-width: 100%; }
+button { font-family: inherit; cursor: pointer; }
+input, select, textarea { font-family: inherit; }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-thumb { background: var(--fire); border-radius: 3px; }
+
+/* ═══════════════════════════════════════════════
+   NAVBAR
+   ═══════════════════════════════════════════════ */
+.navbar {
+  position: sticky; top: 0; z-index: 900;
+  background: rgba(15,23,42,.96);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  height: 64px;
+  padding: 0 20px 0 16px;
+  display: flex; align-items: center; gap: 12px;
+  box-shadow: 0 1px 0 rgba(255,255,255,.06), 0 4px 24px rgba(0,0,0,.25);
+  padding-top: var(--safe-top);
+}
+.nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; flex: 1; }
+.nav-logo { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--fire); object-fit: cover; box-shadow: 0 0 14px rgba(232,82,26,.5); }
+.nav-title { color: #fff; font-family: 'Fraunces', serif; font-size: 20px; line-height: 1; }
+.nav-title em { color: var(--fire-lt); font-style: normal; }
+.nav-links { display: flex; gap: 4px; }
+.nav-link { color: rgba(255,255,255,.65); font-size: 13px; font-weight: 500; padding: 7px 12px; border-radius: 8px; cursor: pointer; transition: all .18s; white-space: nowrap; }
+.nav-link:hover { color: #fff; background: rgba(255,255,255,.08); }
+@media(max-width:540px) { .nav-links { display: none; } }
+.cart-btn {
+  position: relative; background: var(--fire); color: #fff; border: none;
+  border-radius: 10px; padding: 9px 14px; font-size: 13px; font-weight: 600;
+  display: flex; align-items: center; gap: 7px; transition: all .2s; flex-shrink: 0;
+}
+.cart-btn:hover { background: var(--fire-lt); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(232,82,26,.45); }
+.cart-badge {
+  background: var(--warn); color: var(--dark); font-size: 11px; font-weight: 700;
+  min-width: 20px; height: 20px; border-radius: 10px; padding: 0 5px;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform .25s cubic-bezier(.34,1.56,.64,1);
+}
+.cart-badge.bump { transform: scale(1.4); }
+
+/* ═══════════════════════════════════════════════
+   HERO — MOBILE-FIRST
+   ═══════════════════════════════════════════════ */
+.hero {
+  background: linear-gradient(140deg, #0F172A 0%, #1A3A6B 55%, #0F2A4A 100%);
+  padding: clamp(40px,8vw,96px) 20px clamp(36px,6vw,72px);
+  text-align: center; position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 55% at 50% 10%, rgba(232,82,26,.22) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-inner { position: relative; max-width: 720px; margin: 0 auto; }
+.hero-chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(232,82,26,.15); border: 1px solid rgba(232,82,26,.4);
+  color: var(--fire-lt); padding: 5px 14px; border-radius: 20px;
+  font-size: 12px; font-weight: 600; letter-spacing: .4px; margin-bottom: 18px;
+}
+.hero h1 { font-family: 'Fraunces', serif; font-size: clamp(30px,7vw,60px); color: #fff; line-height: 1.1; margin-bottom: 14px; }
+.hero h1 em { color: var(--fire-lt); font-style: normal; }
+.hero-sub { color: rgba(255,255,255,.6); font-size: clamp(14px,2.5vw,17px); margin-bottom: 28px; max-width: 480px; margin-left: auto; margin-right: auto; line-height: 1.65; }
+.hero-ctas { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.hero-stats { display: flex; gap: 24px; justify-content: center; margin-top: 40px; flex-wrap: wrap; }
+.stat-num { font-family: 'Fraunces', serif; font-size: 26px; color: var(--fire-lt); }
+.stat-lbl { color: rgba(255,255,255,.45); font-size: 11px; margin-top: 2px; }
+
+/* ═══════════════════════════════════════════════
+   CATEGORY PILLS — Navegación rápida móvil
+   ═══════════════════════════════════════════════ */
+.cat-pills {
+  display: flex; gap: 10px; padding: 16px 20px; overflow-x: auto;
+  -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  background: #fff; border-bottom: 1px solid var(--border); position: sticky; top: 64px; z-index: 800;
+}
+.cat-pills::-webkit-scrollbar { display: none; }
+.cat-pill {
+  flex-shrink: 0; display: flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border-radius: 50px; border: 1.5px solid var(--border);
+  background: #fff; font-size: 13px; font-weight: 600; cursor: pointer;
+  transition: all .2s; white-space: nowrap; color: var(--muted);
+}
+.cat-pill.active, .cat-pill:hover { border-color: var(--fire); color: var(--fire); background: var(--fire-pale); }
+.cat-pill.water.active, .cat-pill.water:hover { border-color: var(--agua); color: var(--agua); background: var(--agua-pale); }
+
+/* ═══════════════════════════════════════════════
+   LAYOUT / SECCIONES
+   ═══════════════════════════════════════════════ */
+.section { padding: clamp(40px,6vw,72px) 20px; }
+.sec-white { background: #fff; }
+.sec-surface { background: var(--surface); }
+.sec-dark { background: linear-gradient(140deg, var(--dark) 0%, var(--dark2) 100%); }
+.container { max-width: 1160px; margin: 0 auto; }
+.sec-head { text-align: center; margin-bottom: 36px; }
+.sec-head h2 { font-family: 'Fraunces', serif; font-size: clamp(24px,4vw,40px); color: var(--text); margin-bottom: 8px; }
+.sec-dark .sec-head h2 { color: #fff; }
+.sec-head p { color: var(--muted); font-size: 15px; max-width: 440px; margin: 0 auto; }
+.sec-dark .sec-head p { color: rgba(255,255,255,.5); }
+.accent { color: var(--fire); }
+
+/* ═══════════════════════════════════════════════
+   TABS (filtro de marca)
+   ═══════════════════════════════════════════════ */
+.tabs { display: flex; gap: 8px; justify-content: center; margin-bottom: 28px; flex-wrap: wrap; }
+.tab {
+  display: flex; align-items: center; gap: 7px; padding: 9px 20px;
+  border-radius: 50px; border: 2px solid var(--border); background: #fff;
+  font-size: 13px; font-weight: 600; cursor: pointer; transition: all .22s;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+.tab-ab { color: #C53030; border-color: #C53030; }
+.tab-ab.active, .tab-ab:hover { background: #C53030; color: #fff; box-shadow: 0 6px 20px rgba(197,48,48,.3); }
+.tab-gs { color: var(--sky); border-color: var(--sky); }
+.tab-gs.active, .tab-gs:hover { background: var(--sky); color: #fff; box-shadow: 0 6px 20px rgba(26,115,232,.3); }
+.tab-all { color: var(--muted); }
+.tab-all.active, .tab-all:hover { background: var(--dark); color: #fff; border-color: var(--dark); }
+
+/* ═══════════════════════════════════════════════
+   PRODUCT GRID
+   ═══════════════════════════════════════════════ */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(256px, 1fr)); gap: 18px; }
+@media(max-width:480px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
+
+/* ═══════════════════════════════════════════════
+   PRODUCT CARD
+   ═══════════════════════════════════════════════ */
+.card {
+  background: #fff; border-radius: var(--r-lg); overflow: hidden;
+  border: 1px solid var(--border); box-shadow: var(--shadow);
+  transition: transform .28s cubic-bezier(.34,1.56,.64,1), box-shadow .28s;
+  display: flex; flex-direction: column; position: relative;
+}
+.card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+
+/* Card image */
+.card-img-wrap { width: 100%; aspect-ratio: 4/3; position: relative; overflow: hidden; }
+.card-img-wrap.ab { background: linear-gradient(135deg, #7f1d1d, #dc2626); }
+.card-img-wrap.gs { background: linear-gradient(135deg, var(--navy), var(--sky)); }
+.card-img-wrap.ag { background: linear-gradient(135deg, var(--agua-dk), var(--agua)); }
+.card-img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s ease; }
+.card:hover .card-img { transform: scale(1.06); }
+.card-img-fallback { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+.card-img-fallback .kg { font-family: 'Fraunces', serif; font-size: 52px; color: rgba(255,255,255,.95); line-height: 1; }
+.card-img-fallback .kg-lbl { font-size: 13px; color: rgba(255,255,255,.6); font-weight: 500; letter-spacing: 1px; }
+
+/* Card badges */
+.card-badge { position: absolute; top: 10px; left: 10px; background: var(--warn); color: var(--dark); padding: 3px 9px; border-radius: 6px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; box-shadow: 0 2px 8px rgba(0,0,0,.2); }
+.card-marca-logo { position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,.35); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.25); padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; color: #fff; letter-spacing: .5px; }
+
+/* Card body */
+.card-body { padding: 14px 14px 16px; flex: 1; display: flex; flex-direction: column; }
+.card-name { font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 4px; line-height: 1.3; }
+.card-desc { font-size: 11px; color: var(--muted); line-height: 1.55; margin-bottom: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.card-price { font-family: 'Fraunces', serif; font-size: 22px; color: var(--fire); margin-bottom: 3px; line-height: 1; }
+.card-price.agua { color: var(--agua-dk); }
+.card-price-sub { font-size: 10px; color: var(--muted); margin-bottom: 10px; }
+
+/* Stock indicator */
+.stock-ok { font-size: 11px; color: var(--success); font-weight: 600; margin-bottom: 10px; }
+.stock-out { font-size: 11px; color: var(--danger); font-weight: 600; margin-bottom: 10px; }
+
+/* ═══════════════════════════════════════════════
+   QUANTITY CONTROLS
+   ═══════════════════════════════════════════════ */
+.qty-row { display: flex; align-items: center; gap: 7px; margin-bottom: 10px; }
+.qty-btn {
+  width: 32px; height: 32px; border: 1.5px solid var(--border); background: var(--surface);
+  color: var(--text); border-radius: 8px; font-size: 17px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center; transition: all .18s; flex-shrink: 0;
+}
+.qty-btn:hover { border-color: var(--fire); background: var(--fire); color: #fff; }
+.qty-btn:disabled { opacity: .35; cursor: not-allowed; }
+.qty-inp {
+  width: 44px; text-align: center; border: 1.5px solid var(--border); border-radius: 8px;
+  padding: 6px 4px; font-size: 14px; font-weight: 700; background: #fff;
+  -moz-appearance: textfield;
+}
+.qty-inp::-webkit-inner-spin-button { -webkit-appearance: none; }
+.qty-inp:focus { outline: none; border-color: var(--fire); }
+
+/* Add to cart button */
+.add-btn {
+  width: 100%; background: linear-gradient(135deg, var(--fire), var(--fire-lt));
+  color: #fff; border: none; border-radius: 9px; padding: 10px;
+  font-size: 13px; font-weight: 700; transition: all .22s; margin-top: auto;
+}
+.add-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(232,82,26,.4); }
+.add-btn:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; transform: none; box-shadow: none; }
+.add-btn.agua-btn { background: linear-gradient(135deg, var(--agua-dk), var(--agua)); }
+.add-btn.agua-btn:hover:not(:disabled) { box-shadow: 0 6px 18px rgba(14,165,233,.4); }
+
+/* ═══════════════════════════════════════════════
+   WATER SECTION — Bidones
+   ═══════════════════════════════════════════════ */
+.water-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
+@media(max-width:480px) { .water-grid { grid-template-columns: 1fr; } }
+.water-card {
+  background: linear-gradient(135deg, var(--agua-pale) 0%, #E0F2FE 100%);
+  border: 1px solid rgba(14,165,233,.2); border-radius: var(--r-xl);
+  padding: 24px; display: flex; align-items: center; gap: 20px;
+  box-shadow: 0 4px 20px rgba(14,165,233,.1); transition: all .28s;
+}
+.water-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(14,165,233,.2); }
+.water-card-img { width: 80px; height: 100px; object-fit: contain; flex-shrink: 0; }
+.water-card-body { flex: 1; }
+.water-card-name { font-family: 'Fraunces', serif; font-size: 20px; color: var(--dark); margin-bottom: 4px; }
+.water-card-desc { font-size: 12px; color: var(--muted); margin-bottom: 10px; line-height: 1.5; }
+.water-card-price { font-family: 'Fraunces', serif; font-size: 24px; color: var(--agua-dk); margin-bottom: 12px; }
+.water-badge { display: inline-block; background: var(--agua); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; margin-bottom: 8px; letter-spacing: .5px; }
+
+/* ═══════════════════════════════════════════════
+   OTROS SERVICIOS
+   ═══════════════════════════════════════════════ */
+.services-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+@media(min-width:640px) { .services-grid { grid-template-columns: repeat(4, 1fr); } }
+.service-card {
+  background: #fff; border: 1px solid var(--border); border-radius: var(--r-lg);
+  padding: 20px 16px; text-align: center; text-decoration: none; color: var(--text);
+  transition: all .22s; display: block;
+}
+.service-card:hover { border-color: var(--fire); background: var(--fire-pale); transform: translateY(-3px); box-shadow: var(--shadow); }
+.service-card.coming-soon { opacity: .7; }
+.service-card.coming-soon:hover { opacity: 1; }
+.service-icon { font-size: 36px; margin-bottom: 10px; display: block; }
+.service-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+.service-desc { font-size: 11px; color: var(--muted); line-height: 1.4; }
+.service-chip { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-top: 6px; letter-spacing: .5px; }
+.chip-pronto { background: #FEF3C7; color: #92400E; }
+.chip-externo { background: #DBEAFE; color: #1E40AF; }
+
+/* ═══════════════════════════════════════════════
+   INFO CARDS (nosotros)
+   ═══════════════════════════════════════════════ */
+.info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
+.info-card { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.09); border-radius: var(--r); padding: 22px 18px; transition: all .25s; }
+.info-card:hover { background: rgba(232,82,26,.1); border-color: rgba(232,82,26,.28); transform: translateY(-3px); }
+.info-card .ic-icon { font-size: 28px; margin-bottom: 10px; }
+.info-card .ic-title { color: #fff; font-weight: 700; font-size: 15px; margin-bottom: 6px; }
+.info-card .ic-text { color: rgba(255,255,255,.5); font-size: 12px; line-height: 1.6; }
+
+/* ═══════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════ */
+footer { background: var(--dark); color: rgba(255,255,255,.5); padding: 40px 20px 24px; text-align: center; }
+.footer-brand { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 14px; }
+.footer-logo { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--fire); }
+.footer-name { font-family: 'Fraunces', serif; color: #fff; font-size: 18px; }
+.footer-links { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; margin-bottom: 16px; }
+.footer-link { color: rgba(255,255,255,.45); font-size: 12px; padding: 4px 8px; cursor: pointer; transition: color .18s; }
+.footer-link:hover { color: var(--fire-lt); }
+.footer-copy { font-size: 11px; border-top: 1px solid rgba(255,255,255,.07); padding-top: 16px; }
+.footer-copy strong { color: var(--fire-lt); }
+.admin-trigger { background: none; border: none; color: rgba(255,255,255,.1); font-size: 11px; cursor: pointer; padding: 4px 8px; transition: color .2s; }
+.admin-trigger:hover { color: rgba(255,255,255,.3); }
+
+/* ═══════════════════════════════════════════════
+   BUTTONS — Global
+   ═══════════════════════════════════════════════ */
+.btn-fire {
+  background: linear-gradient(135deg, var(--fire), var(--fire-lt)); color: #fff;
+  border: none; border-radius: 12px; padding: 13px 28px; font-size: 14px; font-weight: 700;
+  box-shadow: 0 6px 24px rgba(232,82,26,.45); transition: all .25s;
+}
+.btn-fire:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(232,82,26,.55); }
+.btn-ghost {
+  background: rgba(255,255,255,.07); border: 1.5px solid rgba(255,255,255,.22);
+  color: #fff; border-radius: 12px; padding: 13px 28px; font-size: 14px; font-weight: 600; transition: all .25s;
+}
+.btn-ghost:hover { border-color: var(--fire-lt); color: var(--fire-lt); background: rgba(232,82,26,.07); }
+
+/* ═══════════════════════════════════════════════
+   CART DRAWER
+   ═══════════════════════════════════════════════ */
+.cart-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0,0,0,.5); backdrop-filter: blur(4px);
+  visibility: hidden; opacity: 0; transition: opacity .28s, visibility .28s;
+}
+.cart-overlay.open { visibility: visible; opacity: 1; }
+.cart-drawer {
+  position: fixed; top: 0; right: 0; bottom: 0;
+  width: min(420px, 100vw); z-index: 1001; background: #fff;
+  display: flex; flex-direction: column;
+  transform: translateX(100%); transition: transform .32s cubic-bezier(.4,0,.2,1);
+  box-shadow: -8px 0 40px rgba(0,0,0,.2); padding-bottom: var(--safe-bot);
+}
+.cart-overlay.open .cart-drawer { transform: translateX(0); }
+.drawer-head {
+  background: linear-gradient(135deg, var(--dark), var(--dark2));
+  padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+}
+.drawer-head h3 { color: #fff; font-family: 'Fraunces', serif; font-size: 18px; }
+.drawer-close {
+  background: rgba(255,255,255,.1); border: none; color: #fff;
+  width: 32px; height: 32px; border-radius: 50%; font-size: 16px;
+  display: flex; align-items: center; justify-content: center; transition: background .18s;
+}
+.drawer-close:hover { background: rgba(255,255,255,.2); }
+.drawer-items { flex: 1; overflow-y: auto; padding: 14px; overscroll-behavior: contain; }
+.cart-empty-msg { text-align: center; padding: 48px 20px; color: var(--muted); }
+.cart-empty-msg .ei { font-size: 52px; margin-bottom: 10px; }
+
+/* Cart items */
+.cart-item { display: grid; grid-template-columns: 44px 1fr auto; grid-template-rows: auto auto; column-gap: 10px; row-gap: 3px; align-items: start; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
+.ci-icon { grid-column: 1; grid-row: 1/3; width: 44px; height: 44px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; align-self: center; position: relative; overflow: hidden; }
+.ci-icon.ab { background: linear-gradient(135deg, #7f1d1d, #dc2626); }
+.ci-icon.gs { background: linear-gradient(135deg, var(--navy), var(--sky)); }
+.ci-icon.ag { background: linear-gradient(135deg, var(--agua-dk), var(--agua)); }
+.ci-name { grid-column: 2; grid-row: 1; font-weight: 700; font-size: 13px; color: var(--text); line-height: 1.3; }
+.ci-price-unit { font-size: 11px; color: var(--muted); grid-column: 2; grid-row: 2; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ci-subtotal { grid-column: 3; grid-row: 1/3; font-weight: 700; font-size: 13px; color: var(--text); text-align: right; align-self: center; white-space: nowrap; }
+.ci-controls { display: flex; align-items: center; gap: 5px; }
+.ci-qty-btn { width: 22px; height: 22px; border: 1px solid var(--border); background: var(--surface); border-radius: 5px; font-size: 13px; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+.ci-qty-btn:hover { border-color: var(--fire); color: var(--fire); background: var(--fire-pale); }
+.ci-qty-num { font-weight: 700; font-size: 13px; min-width: 18px; text-align: center; }
+.ci-del { color: var(--danger); font-size: 15px; margin-left: 3px; line-height: 1; }
+.ci-del:hover { color: #b91c1c; }
+
+/* Discount section */
+.drawer-disc { padding: 10px 14px; border-top: 1px solid #f1f5f9; flex-shrink: 0; }
+.disc-row { display: flex; gap: 8px; }
+.disc-inp { flex: 1; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 9px; font-size: 12px; transition: border-color .18s; background: var(--surface); }
+.disc-inp:focus { outline: none; border-color: var(--fire); background: #fff; }
+.disc-apply { background: var(--fire); color: #fff; border: none; border-radius: 9px; padding: 9px 13px; font-size: 12px; font-weight: 700; transition: background .18s; }
+.disc-apply:hover { background: var(--fire-dk); }
+.disc-applied { display: flex; align-items: center; justify-content: space-between; background: #DCFCE7; padding: 8px 12px; border-radius: 9px; font-size: 12px; font-weight: 700; color: #166534; }
+.disc-rm { background: none; border: none; color: var(--danger); font-size: 15px; }
+.disc-msg { font-size: 11px; margin-top: 4px; }
+.disc-msg.err { color: var(--danger); }
+.disc-msg.ok { color: var(--success); }
+
+/* Cart footer / totals */
+.drawer-foot { padding: 14px 14px 12px; border-top: 1px solid #f1f5f9; flex-shrink: 0; }
+.totals-grid { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+.tot-line { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--muted); }
+.tot-line.disc-line { color: var(--success); font-weight: 600; }
+.tot-line.main { font-size: 18px; font-weight: 800; color: var(--text); border-top: 1px solid var(--border); margin-top: 6px; padding-top: 9px; }
+.checkout-btn {
+  width: 100%; background: linear-gradient(135deg, var(--fire), var(--fire-lt));
+  color: #fff; border: none; border-radius: 12px; padding: 14px;
+  font-size: 15px; font-weight: 800; box-shadow: 0 6px 24px rgba(232,82,26,.45); transition: all .22s;
+}
+.checkout-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(232,82,26,.55); }
+.checkout-btn:disabled { background: var(--border); cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* ═══════════════════════════════════════════════
+   CHECKOUT MODAL
+   ═══════════════════════════════════════════════ */
+.modal-back {
+  position: fixed; inset: 0; z-index: 2000;
+  background: rgba(0,0,0,.6); backdrop-filter: blur(6px);
+  display: flex; align-items: flex-end; visibility: hidden; opacity: 0; transition: opacity .28s, visibility .28s;
+}
+@media(min-width:640px) { .modal-back { align-items: center; justify-content: center; } }
+.modal-back.open { visibility: visible; opacity: 1; }
+.modal {
+  background: #fff; width: min(580px, 100%); max-height: 92vh; overflow-y: auto;
+  border-radius: var(--r-lg) var(--r-lg) 0 0; box-shadow: var(--shadow-lg);
+  transform: translateY(40px) scale(.97); transition: transform .3s cubic-bezier(.34,1.2,.64,1), opacity .3s;
+  opacity: 0; padding-bottom: var(--safe-bot);
+}
+@media(min-width:640px) { .modal { border-radius: var(--r-lg); } }
+.modal-back.open .modal { transform: translateY(0) scale(1); opacity: 1; }
+.modal-head {
+  background: linear-gradient(135deg, var(--dark), var(--dark2));
+  padding: 22px 22px 18px; display: flex; align-items: center; justify-content: space-between;
+  border-radius: var(--r-lg) var(--r-lg) 0 0; position: sticky; top: 0; z-index: 10;
+}
+.modal-head h3 { color: #fff; font-family: 'Fraunces', serif; font-size: 19px; }
+.modal-x { background: rgba(255,255,255,.1); border: none; color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 15px; display: flex; align-items: center; justify-content: center; }
+.modal-x:hover { background: rgba(255,255,255,.2); }
+.modal-body { padding: 22px; }
+.order-mini { background: var(--surface); border-radius: 12px; padding: 14px; margin-bottom: 20px; }
+.order-mini h4 { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.mini-item { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; }
+.mini-total { display: flex; justify-content: space-between; font-size: 15px; font-weight: 800; color: var(--fire); border-top: 1px solid var(--border); margin-top: 8px; padding-top: 8px; }
+
+/* Form elements */
+.form-grp { margin-bottom: 15px; }
+.form-lbl { display: block; font-size: 10px; font-weight: 700; color: var(--text); margin-bottom: 5px; text-transform: uppercase; letter-spacing: .6px; }
+.form-inp, .form-sel, .form-ta { width: 100%; padding: 10px 13px; border: 1.5px solid var(--border); border-radius: 9px; font-size: 14px; background: #fff; color: var(--text); transition: border-color .18s, box-shadow .18s; }
+.form-inp:focus, .form-sel:focus, .form-ta:focus { outline: none; border-color: var(--fire); box-shadow: 0 0 0 3px rgba(232,82,26,.1); }
+.form-ta { resize: vertical; min-height: 72px; }
+.form-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media(max-width:480px) { .form-2col { grid-template-columns: 1fr; } }
+
+/* Payment methods */
+.pago-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+@media(max-width:380px) { .pago-grid { grid-template-columns: 1fr; } }
+.pago-opt { position: relative; }
+.pago-opt input { position: absolute; opacity: 0; width: 0; height: 0; }
+.pago-lbl { display: flex; align-items: center; gap: 7px; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 9px; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--text); transition: all .18s; }
+.pago-lbl:hover { border-color: var(--fire); background: var(--fire-pale); }
+.pago-opt input:checked + .pago-lbl { border-color: var(--fire); background: var(--fire-pale); color: var(--fire); }
+.submit-btn { width: 100%; background: linear-gradient(135deg, var(--fire), var(--fire-lt)); color: #fff; border: none; border-radius: 12px; padding: 14px; font-size: 15px; font-weight: 800; margin-top: 8px; box-shadow: 0 6px 24px rgba(232,82,26,.45); transition: all .22s; }
+.submit-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(232,82,26,.55); }
+
+/* Confirmation screen */
+.confirm-screen { padding: 36px 24px; text-align: center; }
+.confirm-icon { font-size: 64px; margin-bottom: 14px; animation: pop .5s cubic-bezier(.34,1.56,.64,1); }
+@keyframes pop { 0%{transform:scale(0)} 100%{transform:scale(1)} }
+.confirm-screen h3 { font-family: 'Fraunces', serif; font-size: 24px; color: var(--success); margin-bottom: 9px; }
+.confirm-screen p { color: var(--muted); font-size: 13px; margin-bottom: 6px; line-height: 1.6; }
+.confirm-id { font-size: 22px; font-weight: 800; color: var(--fire); letter-spacing: 2px; margin: 9px 0; }
+
+/* ═══════════════════════════════════════════════
+   ADMIN ESTADO MODAL
+   ═══════════════════════════════════════════════ */
+.estado-modal-back { position: fixed; inset: 0; z-index: 3000; background: rgba(0,0,0,.7); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; padding: 20px; visibility: hidden; opacity: 0; transition: opacity .25s, visibility .25s; }
+.estado-modal-back.open { visibility: visible; opacity: 1; }
+.estado-modal { background: #fff; border-radius: var(--r-lg); width: min(500px, 100%); box-shadow: var(--shadow-lg); transform: scale(.95); transition: transform .28s cubic-bezier(.34,1.2,.64,1), opacity .28s; opacity: 0; overflow: hidden; }
+.estado-modal-back.open .estado-modal { transform: scale(1); opacity: 1; }
+.estado-modal-head { background: linear-gradient(135deg, var(--navy), var(--sky)); padding: 22px; display: flex; align-items: center; justify-content: space-between; }
+.estado-modal-head h3 { color: #fff; font-family: 'Fraunces', serif; font-size: 18px; }
+.estado-modal-body { padding: 22px; }
+.estado-info { background: var(--surface); border-radius: 11px; padding: 13px; margin-bottom: 18px; font-size: 12px; line-height: 1.8; }
+.estado-info strong { color: var(--text); }
+.estado-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.est-btn { padding: 11px; border: 2px solid transparent; border-radius: 11px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 7px; }
+.est-btn-camino { border-color: var(--info); color: var(--info); background: rgba(6,182,212,.06); }
+.est-btn-camino:hover { background: var(--info); color: #fff; }
+.est-btn-entregado { border-color: var(--success); color: var(--success); background: rgba(34,197,94,.06); }
+.est-btn-entregado:hover { background: var(--success); color: #fff; }
+.est-btn-cancelado { border-color: var(--danger); color: var(--danger); background: rgba(239,68,68,.06); }
+.est-btn-cancelado:hover { background: var(--danger); color: #fff; }
+.est-btn-pendiente { border-color: var(--warn); color: var(--warn); background: rgba(245,158,11,.06); }
+.est-btn-pendiente:hover { background: var(--warn); color: #fff; }
+.est-pdf-row { margin-top: 14px; display: flex; align-items: center; gap: 9px; padding-top: 14px; border-top: 1px solid var(--border); }
+.est-pdf-row label { font-size: 12px; color: var(--muted); cursor: pointer; display: flex; align-items: center; gap: 6px; }
+
+/* ═══════════════════════════════════════════════
+   TOAST NOTIFICATIONS
+   ═══════════════════════════════════════════════ */
+.toast-wrap { position: fixed; bottom: max(24px, var(--safe-bot)); right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+.toast {
+  background: var(--dark); color: #fff; border-left: 4px solid var(--fire);
+  padding: 11px 16px; border-radius: 11px; font-size: 12px; font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0,0,0,.3); max-width: 280px; line-height: 1.4;
+  display: flex; align-items: flex-start; gap: 8px; animation: toastSlide .3s ease;
+}
+.toast.ok { border-left-color: var(--success); }
+.toast.err { border-left-color: var(--danger); }
+@keyframes toastSlide { from{transform:translateX(110%);opacity:0} to{transform:translateX(0);opacity:1} }
+
+/* ═══════════════════════════════════════════════
+   LOADER
+   ═══════════════════════════════════════════════ */
+.loader { position: fixed; inset: 0; z-index: 9999; background: rgba(15,23,42,.94); display: none; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
+.loader.show { display: flex; }
+.spin { width: 48px; height: 48px; border: 4px solid rgba(255,255,255,.08); border-top-color: var(--fire); border-radius: 50%; animation: spin .9s linear infinite; }
+@keyframes spin { to{transform:rotate(360deg)} }
+.loader p { color: rgba(255,255,255,.65); font-size: 13px; }
+
+/* ═══════════════════════════════════════════════
+   SKELETON
+   ═══════════════════════════════════════════════ */
+.skeleton { background: #e2e8f0; border-radius: var(--r-lg); overflow: hidden; height: 340px; position: relative; }
+.skeleton::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.5) 50%, transparent 100%); animation: shimmer 1.4s infinite; }
+@keyframes shimmer { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+</style>
+</head>
+<body>
+
+<div class="loader" id="loader"><div class="spin"></div><p id="loaderTxt">Cargando…</p></div>
+<div class="toast-wrap" id="toasts"></div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a class="nav-brand" href="#">
+    <img class="nav-logo" src="https://lh3.googleusercontent.com/d/1vuRrxIAiHdyMlwI69pkrTB07gNGCyJRk" alt="Tu Gas"
+      onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><text y=%2232%22 font-size=%2232%22>🔥</text></svg>'">
+    <span class="nav-title">Tu <em>Gas</em></span>
+  </a>
+  <div class="nav-links">
+    <span class="nav-link" onclick="goto('#gas')">Gas</span>
+    <span class="nav-link" onclick="goto('#agua')">Agua</span>
+    <span class="nav-link" onclick="goto('#servicios')">Servicios</span>
+    <span class="nav-link" onclick="goto('#contacto')">Contacto</span>
+  </div>
+  <button class="cart-btn" onclick="toggleCart()" aria-label="Carrito">
+    🛒 <span id="cartBadge" class="cart-badge">0</span>
+  </button>
+</nav>
+
+<!-- CATEGORY PILLS (Mobile fast nav) -->
+<div class="cat-pills">
+  <button class="cat-pill active" onclick="goto('#gas');setActivePill(this)">🔥 Gas</button>
+  <button class="cat-pill water" onclick="goto('#agua');setActivePill(this)">💧 Agua 20L</button>
+  <button class="cat-pill" onclick="goto('#servicios');setActivePill(this)">🔧 Servicios</button>
+  <button class="cat-pill" onclick="goto('#nosotros');setActivePill(this)">⭐ Nosotros</button>
+  <button class="cat-pill" onclick="goto('#contacto');setActivePill(this)">📍 Contacto</button>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-chip">🔥 Entrega en Macul y comunas aledañas</div>
+    <h1>El Gas que necesitas,<br><em>cuando lo necesitas</em></h1>
+    <p class="hero-sub">Distribuidora oficial Abastible y Gasco. Gas y agua a domicilio con entrega rápida en Santiago.</p>
+    <div class="hero-ctas">
+      <button class="btn-fire" onclick="goto('#gas')">🛒 Comprar Ahora</button>
+      <button class="btn-ghost" onclick="wa()">📲 WhatsApp</button>
+    </div>
+    <div class="hero-stats">
+      <div><div class="stat-num">500+</div><div class="stat-lbl">Clientes felices</div></div>
+      <div><div class="stat-num">2</div><div class="stat-lbl">Marcas líderes</div></div>
+      <div><div class="stat-num">7</div><div class="stat-lbl">Tamaños gas</div></div>
+      <div><div class="stat-num">24h</div><div class="stat-lbl">Entrega rápida</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- GAS SECTION -->
+<section class="section sec-white" id="gas">
+  <div class="container">
+    <div class="sec-head">
+      <h2>Gas <span class="accent">Licuado</span></h2>
+      <p>Cilindros certificados Abastible y Gasco. Elige tu marca y tamaño.</p>
+    </div>
+    <div class="tabs">
+      <button class="tab tab-ab active" onclick="filtrar('Abastible',this)">🔴 Abastible</button>
+      <button class="tab tab-gs" onclick="filtrar('Gasco',this)">🔵 Gasco</button>
+      <button class="tab tab-all" onclick="filtrar('Todos',this)">🔘 Todos</button>
+    </div>
+    <div class="grid" id="productsGrid">
+      <div class="skeleton"></div><div class="skeleton"></div>
+      <div class="skeleton"></div><div class="skeleton"></div>
+    </div>
+  </div>
+</section>
+
+<!-- AGUA SECTION -->
+<section class="section sec-surface" id="agua">
+  <div class="container">
+    <div class="sec-head">
+      <h2>💧 Bidones de <span style="color:var(--agua-dk)">Agua</span></h2>
+      <p>Agua purificada 20L a domicilio. Entrega junto a tu pedido de gas.</p>
+    </div>
+    <div class="water-grid" id="waterGrid">
+      <!-- Cards de agua se generan dinámicamente o estáticas aquí -->
+      <div class="water-card" id="waterCard_premium">
+        <img class="water-card-img"
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRYEF_7fkAwgcgacJtgWQjnoMn43rhv1jSda-at7VanU_jwoAUTOVWbn60CMaERl5Fzzo-GX64x-wfMY8gyFGM_Nty0WNthCApA2CEtFarLWvu5G-LCLezFz_YL1HY2QB_LFT74uEWIJkXFUI29DxiFcAPcPf2DktmFqiyfC6Wox0-hsu_eTZ0Hy9yUgAEsX-aL7fSzMpFfu3IrbGfh6K3GQIXNd4qqLUPjl3fZtrFUYZFdtzYIW6TXUfNpO8hRdfw2NvC7V3_XGzv"
+          alt="Bidón Premium 20L"
+          onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 80 100%22><text y=%2260%22 font-size=%2260%22>💧</text></svg>'">
+        <div class="water-card-body">
+          <span class="water-badge">PREMIUM</span>
+          <div class="water-card-name">Agua Premium 20L</div>
+          <div class="water-card-desc">Triple filtrado con equilibrio mineral perfecto.</div>
+          <div class="water-card-price">$4.500</div>
+          <div class="qty-row" style="margin-bottom:10px">
+            <button class="qty-btn" onclick="changeQtyWater('wqty_premium',-1)">−</button>
+            <input class="qty-inp" id="wqty_premium" type="number" value="1" min="1" max="20">
+            <button class="qty-btn" onclick="changeQtyWater('wqty_premium',1)">+</button>
+          </div>
+          <button class="add-btn agua-btn" onclick="addWaterToCart('Agua Premium 20L',4500,'wqty_premium')">💧 Agregar al carrito</button>
+        </div>
+      </div>
+
+      <div class="water-card" id="waterCard_essential">
+        <img class="water-card-img"
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8_TmfQpq7EuMMPlg2YnrDPV_M6_q120sMRuq--7pbKjJG3IFJmv0a3NLcUj28TN7OW3duBMEH_oVQUXFum6xZL-KuUJ6QyMnBXgLMRRZ1o4cds9a8wLNa8QrsA3ADmS0Zp7vHZMWarWmixh5tzazkNV9l9SlFQXNf76jOQU0QKQzRR9fhKNEyQfHIL5O5lPh3cT25d3wFWyxWVbn_lpK7fLT9aJXt6pnSxmEV-m4w-gTyXCr0c2YdmMK1qYQ54SrCELTeXDO6jKf0"
+          alt="Bidón Essential 20L"
+          onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 80 100%22><text y=%2260%22 font-size=%2260%22>💧</text></svg>'">
+        <div class="water-card-body">
+          <span class="water-badge" style="background:var(--muted)">ECONÓMICO</span>
+          <div class="water-card-name">Agua Essential 20L</div>
+          <div class="water-card-desc">Opción económica para consumo diario familiar.</div>
+          <div class="water-card-price">$3.200</div>
+          <div class="qty-row" style="margin-bottom:10px">
+            <button class="qty-btn" onclick="changeQtyWater('wqty_essential',-1)">−</button>
+            <input class="qty-inp" id="wqty_essential" type="number" value="1" min="1" max="20">
+            <button class="qty-btn" onclick="changeQtyWater('wqty_essential',1)">+</button>
+          </div>
+          <button class="add-btn agua-btn" onclick="addWaterToCart('Agua Essential 20L',3200,'wqty_essential')">💧 Agregar al carrito</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OTROS SERVICIOS -->
+<section class="section sec-white" id="servicios">
+  <div class="container">
+    <div class="sec-head">
+      <h2>🔧 Otros <span class="accent">Servicios</span></h2>
+      <p>También conectamos con servicios para tu hogar.</p>
+    </div>
+    <div class="services-grid">
+      <a class="service-card" href="https://wa.me/56961830331?text=Hola%2C+necesito+gasfitería" target="_blank">
+        <span class="service-icon">🪛</span>
+        <div class="service-name">Gasfitería</div>
+        <div class="service-desc">Instalaciones y reparaciones de gas y agua</div>
+        <span class="service-chip chip-externo">VÍA WHATSAPP</span>
+      </a>
+      <a class="service-card" href="https://wa.me/56961830331?text=Hola%2C+necesito+una+reparación" target="_blank">
+        <span class="service-icon">🔩</span>
+        <div class="service-name">Reparaciones</div>
+        <div class="service-desc">Arreglos menores en el hogar</div>
+        <span class="service-chip chip-externo">VÍA WHATSAPP</span>
+      </a>
+      <a class="service-card" href="https://wa.me/56961830331?text=Hola%2C+necesito+electricidad" target="_blank">
+        <span class="service-icon">⚡</span>
+        <div class="service-name">Electricidad</div>
+        <div class="service-desc">Mantención e instalaciones eléctricas</div>
+        <span class="service-chip chip-externo">VÍA WHATSAPP</span>
+      </a>
+      <!-- ARRIENDO GLOBO — preparado para proyecto separado -->
+      <div class="service-card coming-soon" onclick="toast('🎈 Próximamente disponible. ¡Pronto podrás reservar aquí!','ok')" style="cursor:pointer">
+        <span class="service-icon">🎈</span>
+        <div class="service-name">Arriendo Globo</div>
+        <div class="service-desc">Globo inflable para eventos y fiestas</div>
+        <span class="service-chip chip-pronto">PRÓXIMAMENTE</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NOSOTROS -->
+<section class="section sec-dark" id="nosotros">
+  <div class="container">
+    <div class="sec-head"><h2>¿Por qué elegirnos?</h2><p>Años llevando energía a hogares de Santiago.</p></div>
+    <div class="info-grid">
+      <div class="info-card"><div class="ic-icon">⚡</div><div class="ic-title">Entrega Rápida</div><div class="ic-text">Despacho en el día en Macul y comunas cercanas.</div></div>
+      <div class="info-card"><div class="ic-icon">🛡️</div><div class="ic-title">Cilindros Certificados</div><div class="ic-text">Productos oficiales Abastible y Gasco con certificación vigente.</div></div>
+      <div class="info-card"><div class="ic-icon">💧</div><div class="ic-title">Gas + Agua</div><div class="ic-text">Pide gas y agua en un solo pedido, un solo despacho.</div></div>
+      <div class="info-card"><div class="ic-icon">💳</div><div class="ic-title">Múltiples Pagos</div><div class="ic-text">Efectivo, transferencia, débito o pago al recibir.</div></div>
+      <div class="info-card"><div class="ic-icon">📲</div><div class="ic-title">Soporte WhatsApp</div><div class="ic-text">Seguimiento de tu pedido en tiempo real.</div></div>
+      <div class="info-card"><div class="ic-icon">📄</div><div class="ic-title">Comprobante Digital</div><div class="ic-text">Recibe tu comprobante PDF por correo al confirmar.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACTO -->
+<section class="section sec-white" id="contacto">
+  <div class="container" style="max-width:680px">
+    <div class="sec-head"><h2>📍 <span class="accent">Contáctanos</span></h2><p>Estamos en Macul, Santiago.</p></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px">
+      <div style="background:var(--surface);border-radius:13px;padding:20px;text-align:center">
+        <div style="font-size:28px;margin-bottom:7px">📍</div>
+        <div style="font-weight:700;margin-bottom:4px;font-size:14px">Dirección</div>
+        <div style="color:var(--muted);font-size:12px;line-height:1.5">Alejandro Ávalos Davidson 2059, Macul, Santiago</div>
+      </div>
+      <div style="background:var(--surface);border-radius:13px;padding:20px;text-align:center">
+        <div style="font-size:28px;margin-bottom:7px">📞</div>
+        <div style="font-weight:700;margin-bottom:4px;font-size:14px">Teléfono / WhatsApp</div>
+        <div style="color:var(--muted);font-size:12px">+56 961830331</div>
+      </div>
+    </div>
+    <div style="text-align:center;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn-fire" onclick="wa()">📲 WhatsApp</button>
+      <button class="btn-ghost" style="color:var(--text);border-color:var(--border)" onclick="abrirMapa()">🗺️ Cómo llegar</button>
+      <button class="btn-ghost" style="color:var(--text);border-color:var(--border)" onclick="location.href='mailto:distribuidoratugas@gmail.com'">✉️ Email</button>
+    </div>
+    <div style="margin-top:24px;border-radius:15px;overflow:hidden;box-shadow:var(--shadow)">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d106475.43044015122!2d-70.70427970438809!3d-33.492082531587975!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9662cf648d5a0399%3A0x58fc1a43ba6c20d!2sDistribuidora%20%22TU%20GAS%22!5e0!3m2!1ses!2scl!4v1774961554231!5m2!1ses!2scl"
+        width="100%" height="240"
+        style="border:0;display:block" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">
+    <img class="footer-logo" src="https://lh3.googleusercontent.com/d/1vuRrxIAiHdyMlwI69pkrTB07gNGCyJRk" alt="Tu Gas" onerror="this.style.display='none'">
+    <span class="footer-name">Tu Gas</span>
+  </div>
+  <div class="footer-links">
+    <span class="footer-link" onclick="goto('#gas')">Gas</span>
+    <span class="footer-link" onclick="goto('#agua')">Agua</span>
+    <span class="footer-link" onclick="goto('#servicios')">Servicios</span>
+    <span class="footer-link" onclick="goto('#nosotros')">Nosotros</span>
+    <span class="footer-link" onclick="goto('#contacto')">Contacto</span>
+  </div>
+  <div class="footer-copy">© 2025 <strong>Tu Gas</strong> — Distribuidora de Gas Licuado, Santiago.<br>Alejandro Ávalos Davidson 2059, Macul · +56 961830331</div>
+  <div style="margin-top:10px">
+    <button class="admin-trigger" onclick="adminClick()" title="">· · ·</button>
+  </div>
+</footer>
+
+<!-- CARRITO DRAWER -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCartOutside(event)">
+  <div class="cart-drawer">
+    <div class="drawer-head">
+      <h3>🛒 Tu Carrito</h3>
+      <button class="drawer-close" onclick="toggleCart()">✕</button>
+    </div>
+    <div class="drawer-items" id="drawerItems">
+      <div class="cart-empty-msg" id="cartEmpty">
+        <div class="ei">🛒</div>
+        <p style="font-weight:700;margin-bottom:5px">Tu carrito está vacío</p>
+        <p style="font-size:12px">Agrega gas o agua para comenzar</p>
+      </div>
+    </div>
+    <div class="drawer-disc" id="drawerDisc" style="display:none">
+      <div id="discFormWrap">
+        <div class="disc-row">
+          <input class="disc-inp" id="discInp" type="text" placeholder="Código de descuento" onkeydown="if(event.key==='Enter')applyDisc()">
+          <button class="disc-apply" onclick="applyDisc()">Aplicar</button>
+        </div>
+        <p class="disc-msg" id="discMsg"></p>
+      </div>
+      <div id="discApplied" style="display:none">
+        <div class="disc-applied">
+          <span>🏷️ <span id="discLbl"></span></span>
+          <button class="disc-rm" onclick="removeDisc()">✕</button>
+        </div>
+      </div>
+    </div>
+    <div class="drawer-foot" id="drawerFoot" style="display:none">
+      <div class="totals-grid">
+        <div class="tot-line"><span>Subtotal</span><span id="totSubtotal">$0</span></div>
+        <div class="tot-line disc-line" id="discRow" style="display:none">
+          <span id="discRowLbl">Descuento</span><span id="discRowAmt"></span>
+        </div>
+        <div class="tot-line" id="valesRow" style="display:none;color:var(--warn)">
+          <span>🎟️ Cargo Vales</span><span>+$500</span>
+        </div>
+        <div class="tot-line main"><span>Total</span><span id="totTotal">$0</span></div>
+      </div>
+      <button class="checkout-btn" onclick="openCheckout()">Finalizar Compra →</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CHECKOUT -->
+<div class="modal-back" id="modalBack">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>📦 Finalizar Pedido</h3>
+      <button class="modal-x" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="checkoutForm">
+      <div class="order-mini">
+        <h4>Resumen del pedido</h4>
+        <div id="miniItems"></div>
+        <div class="mini-total"><span>Total</span><span id="miniTotal">$0</span></div>
+      </div>
+      <div class="form-2col">
+        <div class="form-grp"><label class="form-lbl">Nombre *</label><input class="form-inp" id="fNombre" type="text" placeholder="María González" autocomplete="name"></div>
+        <div class="form-grp"><label class="form-lbl">Teléfono *</label><input class="form-inp" id="fTel" type="tel" placeholder="+56 9 1234 5678" autocomplete="tel"></div>
+      </div>
+      <div class="form-grp"><label class="form-lbl">Email (para comprobante)</label><input class="form-inp" id="fEmail" type="email" placeholder="tu@email.com" autocomplete="email"></div>
+      <div class="form-grp"><label class="form-lbl">Dirección de entrega *</label><input class="form-inp" id="fDir" type="text" placeholder="Calle 123, Dpto 4B, Macul" autocomplete="street-address"></div>
+      <div class="form-grp">
+        <label class="form-lbl">Método de pago *</label>
+        <div class="pago-grid">
+          <div class="pago-opt"><input type="radio" name="pago" id="pEfectivo" value="Efectivo" checked onchange="actualizarCargoVales()"><label class="pago-lbl" for="pEfectivo">💵 Efectivo</label></div>
+          <div class="pago-opt"><input type="radio" name="pago" id="pTransf" value="Transferencia" onchange="actualizarCargoVales()"><label class="pago-lbl" for="pTransf">🏦 Transferencia</label></div>
+          <div class="pago-opt"><input type="radio" name="pago" id="pValeAb" value="Vale Abastible" onchange="actualizarCargoVales()"><label class="pago-lbl" for="pValeAb">🔴 Vale Abastible <span style="font-size:10px;color:var(--warn)">(+$500)</span></label></div>
+          <div class="pago-opt"><input type="radio" name="pago" id="pValeGas" value="Vale Gasco" onchange="actualizarCargoVales()"><label class="pago-lbl" for="pValeGas">🔵 Vale Gasco <span style="font-size:10px;color:var(--warn)">(+$500)</span></label></div>
+          <div class="pago-opt"><input type="radio" name="pago" id="pAlRecibir" value="Pago al recibir" onchange="actualizarCargoVales()"><label class="pago-lbl" for="pAlRecibir">📦 Al recibir</label></div>
+        </div>
+        <div id="valesAviso" style="display:none;margin-top:9px;background:var(--fire-pale);border:1px solid rgba(232,82,26,.3);border-radius:9px;padding:9px 12px;font-size:12px;color:var(--fire-dk)">
+          ⚠️ El vale cubre el valor del cilindro. El repartidor cobrará <strong>$500 adicionales en efectivo</strong>.
+        </div>
+      </div>
+      <div class="form-grp"><label class="form-lbl">Observaciones</label><textarea class="form-ta" id="fObs" placeholder="Instrucciones de entrega, timbre, etc."></textarea></div>
+      <button class="submit-btn" onclick="confirmOrder()">✅ Confirmar Pedido</button>
+    </div>
+    <div class="confirm-screen" id="confirmScreen" style="display:none">
+      <div class="confirm-icon">🎉</div>
+      <h3>¡Pedido Confirmado!</h3>
+      <p>Tu número de pedido es:</p>
+      <div class="confirm-id" id="confirmID">—</div>
+      <p>Recibirás un correo con tu comprobante y notificaciones de estado.</p>
+      <p style="margin-top:9px;font-size:11px;color:#94a3b8">Seguimiento también por WhatsApp:</p>
+      <button class="btn-fire" style="margin-top:16px" onclick="waConfirm()">📲 Seguir por WhatsApp</button>
+      <br><br>
+      <button class="btn-ghost" style="color:var(--text);border-color:var(--border)" onclick="closeModal()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CAMBIO DE ESTADO (Admin rápido) -->
+<div class="estado-modal-back" id="estadoModalBack">
+  <div class="estado-modal">
+    <div class="estado-modal-head">
+      <h3>🔧 Gestionar Pedido</h3>
+      <button class="modal-x" onclick="cerrarEstadoModal()">✕</button>
+    </div>
+    <div class="estado-modal-body">
+      <div class="form-grp">
+        <label class="form-lbl">N° de Pedido</label>
+        <input class="form-inp" id="adminPedidoID" type="text" placeholder="PED010725-00003"
+          style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()">
+        <button class="disc-apply" style="margin-top:8px;width:100%;padding:11px" onclick="buscarPedidoAdmin()">🔍 Buscar</button>
+      </div>
+      <div class="estado-info" id="estadoInfo" style="display:none"></div>
+      <div id="estadoBtns" style="display:none">
+        <p style="font-size:11px;color:var(--muted);margin-bottom:9px;text-transform:uppercase;letter-spacing:.5px;font-weight:700">Cambiar estado a:</p>
+        <div class="estado-btns">
+          <button class="est-btn est-btn-camino"   onclick="cambiarEstado('En camino')">🚚 En camino</button>
+          <button class="est-btn est-btn-entregado" onclick="cambiarEstado('Entregado')">✅ Entregado</button>
+          <button class="est-btn est-btn-cancelado" onclick="cambiarEstado('Cancelado')">❌ Cancelado</button>
+          <button class="est-btn est-btn-pendiente" onclick="cambiarEstado('Pendiente')">🟡 Pendiente</button>
+        </div>
+        <div class="est-pdf-row">
+          <input type="checkbox" id="enviarPDF" checked>
+          <label for="enviarPDF">Enviar también comprobante PDF al cliente</label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// CONFIGURACIÓN — Pega aquí la URL de tu Google Apps Script
+// ══════════════════════════════════════════════════════════════
+var GAS_URL = 'https://script.google.com/macros/s/AKfycbzVWWf0qub5_66Jk_vPcICkrwnDf8N5xenbNRNViTtuNS68nRhT2yZTVYxZiZN1_uqn/exec';
+
+// ══════════════════════════════════════════════════════════════
+// HELPER: Fetch al backend GAS
+// ══════════════════════════════════════════════════════════════
+function gasCall(accion, params) {
+  var body = Object.assign({ accion: accion }, params || {});
+  return fetch(GAS_URL, {
+    method: 'POST',
+    mode: 'cors',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(body)
+  })
+  .then(function(r) { return r.json(); })
+  .catch(function(e) { return { ok: false, error: e.message }; });
+}
+
+// ══════════════════════════════════════════════════════════════
+// ESTADO GLOBAL
+// ══════════════════════════════════════════════════════════════
+var catalogo    = {};
+var inventario  = {};
+var carrito     = [];     // [{tipo:'gas'|'agua', marca, kg, nombre, precioUnit, cantidad, subtotal, imagen}]
+var descuento   = null;
+var filtroMarca = 'Abastible';
+var pedidoIDConfirmado = '';
+var adminClicks = 0, adminTimer = null;
+var pedidoAdminActual = null;
+
+// ══════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', function() {
+  showLoader(true, 'Cargando productos…');
+  gasCall('getCatalogo')
+    .then(function(cat) {
+      catalogo = cat;
+      return gasCall('getInventario');
+    })
+    .then(function(inv) {
+      inventario = inv;
+      showLoader(false);
+      renderProducts();
+    })
+    .catch(function(e) {
+      showLoader(false);
+      toast('Error al cargar: ' + e, 'err');
+    });
+});
+
+// ══════════════════════════════════════════════════════════════
+// RENDER PRODUCTOS GAS (sin cambios de lógica)
+// ══════════════════════════════════════════════════════════════
+function renderProducts() {
+  var grid   = document.getElementById('productsGrid');
+  var marcas = filtroMarca === 'Todos' ? Object.keys(catalogo) : [filtroMarca];
+  grid.innerHTML = '';
+  var hayItems = false;
+
+  marcas.forEach(function(marca) {
+    if (!catalogo[marca]) return;
+    var kgs = Object.keys(catalogo[marca]).sort(function(a,b){ return parseInt(b)-parseInt(a); });
+
+    kgs.forEach(function(kg) {
+      var prod   = catalogo[marca][kg];
+      var kgN    = parseInt(kg);
+      var stock  = (inventario[marca] && inventario[marca][kgN] !== undefined)
+                   ? parseInt(inventario[marca][kgN]) : 0;
+      var isAb   = marca === 'Abastible';
+      var cls    = isAb ? 'ab' : 'gs';
+      var sinStk = stock <= 0;
+      var marcaL = isAb ? 'ABASTIBLE' : 'GASCO';
+      var qtyId  = 'qty_' + marca + '_' + kgN;
+
+      var badge = '';
+      if (kgN === 15) badge = '<div class="card-badge">⭐ Popular</div>';
+      if (kgN === 45) badge = '<div class="card-badge" style="background:#E8521A">🏭 Industrial</div>';
+
+      var imgUrl  = prod.imagen || '';
+      var imgHtml = imgUrl
+        ? '<img class="card-img" src="' + imgUrl + '" alt="' + prod.nombre + '" loading="lazy" decoding="async"'
+          + ' onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">'
+          + '<div class="card-img-fallback" style="display:none"><div class="kg">' + kgN + '</div><div class="kg-lbl">KILOGRAMOS</div></div>'
+        : '<div class="card-img-fallback"><div class="kg">' + kgN + '</div><div class="kg-lbl">KILOGRAMOS</div></div>';
+
+      var descHtml = prod.descripcion
+        ? '<p class="card-desc">' + prod.descripcion + '</p>' : '';
+
+      var dispHtml = sinStk
+        ? '<div class="stock-out">⛔ Sin stock</div>'
+        : '<div class="stock-ok">✅ Disponible</div>';
+
+      var card = '<div class="card" data-id="' + prod.id + '">'
+        + '<div class="card-img-wrap ' + cls + '">'
+        + imgHtml + badge
+        + '<div class="card-marca-logo">' + marcaL + '</div>'
+        + '</div>'
+        + '<div class="card-body">'
+        + '<div class="card-name">' + prod.nombre + '</div>'
+        + descHtml
+        + '<div class="card-price">$' + parseInt(prod.precio).toLocaleString('es-CL') + '</div>'
+        + '<div class="card-price-sub">Precio por cilindro · CLP</div>'
+        + dispHtml
+        + '<div class="qty-row">'
+        + '<button class="qty-btn" onclick="changeQty(\'' + qtyId + '\',-1)" ' + (sinStk ? 'disabled' : '') + '>−</button>'
+        + '<input class="qty-inp" id="' + qtyId + '" type="number" value="1" min="1" max="' + (stock || 1) + '">'
+        + '<button class="qty-btn" onclick="changeQty(\'' + qtyId + '\',1)" ' + (sinStk ? 'disabled' : '') + '>+</button>'
+        + '</div>'
+        + '<button class="add-btn" onclick="addToCart(\'' + marca + '\',' + kgN + ')" ' + (sinStk ? 'disabled' : '') + '>'
+        + (sinStk ? '⛔ Sin stock' : '🛒 Agregar')
+        + '</button>'
+        + '</div></div>';
+
+      grid.innerHTML += card;
+      hayItems = true;
+    });
+  });
+
+  if (!hayItems) {
+    grid.innerHTML = '<div style="text-align:center;color:var(--muted);padding:48px 20px;grid-column:1/-1">'
+      + '<div style="font-size:40px;margin-bottom:10px">📦</div>'
+      + '<p style="font-size:15px;font-weight:600">No hay productos disponibles.</p></div>';
+  }
+}
+
+function filtrar(marca, btn) {
+  filtroMarca = marca;
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  btn.classList.add('active');
+  renderProducts();
+}
+
+function changeQty(id, d) {
+  var inp = document.getElementById(id);
+  if (!inp) return;
+  var v = Math.max(1, Math.min(parseInt(inp.max) || 99, parseInt(inp.value || 1) + d));
+  inp.value = v;
+}
+
+function changeQtyWater(id, d) {
+  var inp = document.getElementById(id);
+  if (!inp) return;
+  var v = Math.max(1, Math.min(20, parseInt(inp.value || 1) + d));
+  inp.value = v;
+}
+
+// ══════════════════════════════════════════════════════════════
+// CARRITO — Gas (lógica original preservada)
+// ══════════════════════════════════════════════════════════════
+function addToCart(marca, kg) {
+  var prod = catalogo[marca] && catalogo[marca][kg];
+  if (!prod) return;
+  var stock = (inventario[marca] && inventario[marca][kg] !== undefined) ? parseInt(inventario[marca][kg]) : 0;
+  var qty   = parseInt(document.getElementById('qty_' + marca + '_' + kg)?.value || 1);
+  var existente = carrito.find(function(i){ return i.tipo === 'gas' && i.marca === marca && i.kg === kg; });
+  var enCarrito = existente ? existente.cantidad : 0;
+
+  if (qty + enCarrito > stock) { toast('Stock insuficiente para esa cantidad', 'err'); return; }
+
+  if (existente) {
+    existente.cantidad += qty;
+    existente.subtotal = existente.cantidad * existente.precioUnit;
+  } else {
+    carrito.push({
+      tipo: 'gas', marca: marca, kg: kg, nombre: prod.nombre,
+      precioUnit: parseInt(prod.precio), cantidad: qty,
+      subtotal: qty * parseInt(prod.precio), imagen: prod.imagen || ''
+    });
+  }
+
+  renderCart(); updateBadge(); bumpBadge();
+  toast('✅ ' + prod.nombre + ' agregado', 'ok');
+}
+
+// ══════════════════════════════════════════════════════════════
+// CARRITO — Agua (nuevo, mismo flujo)
+// ══════════════════════════════════════════════════════════════
+function addWaterToCart(nombre, precio, qtyId) {
+  var qty = parseInt(document.getElementById(qtyId)?.value || 1);
+  var existente = carrito.find(function(i){ return i.tipo === 'agua' && i.nombre === nombre; });
+
+  if (existente) {
+    existente.cantidad += qty;
+    existente.subtotal = existente.cantidad * existente.precioUnit;
+  } else {
+    carrito.push({
+      tipo: 'agua', marca: 'Agua', kg: 20, nombre: nombre,
+      precioUnit: precio, cantidad: qty, subtotal: qty * precio, imagen: ''
+    });
+  }
+
+  renderCart(); updateBadge(); bumpBadge();
+  toast('💧 ' + nombre + ' agregado', 'ok');
+}
+
+// ══════════════════════════════════════════════════════════════
+// RENDER CARRITO
+// ══════════════════════════════════════════════════════════════
+function renderCart() {
+  var cont  = document.getElementById('drawerItems');
+  var empty = document.getElementById('cartEmpty');
+  var foot  = document.getElementById('drawerFoot');
+  var disc  = document.getElementById('drawerDisc');
+
+  if (carrito.length === 0) {
+    cont.innerHTML = ''; cont.appendChild(empty);
+    empty.style.display = 'block';
+    foot.style.display = 'none'; disc.style.display = 'none';
+    descuento = null; return;
+  }
+  empty.style.display = 'none';
+  foot.style.display = 'block'; disc.style.display = 'block';
+
+  var html = '';
+  carrito.forEach(function(item, idx) {
+    var cls = item.tipo === 'agua' ? 'ag' : (item.marca === 'Abastible' ? 'ab' : 'gs');
+    var iconC = item.imagen
+      ? '<img src="' + item.imagen + '" onerror="this.style.display=\'none\'">'
+      : (item.tipo === 'agua' ? '💧' : '🔥');
+    html += '<div class="cart-item">'
+      + '<div class="ci-icon ' + cls + '">' + iconC + '</div>'
+      + '<div class="ci-name">' + item.nombre + '</div>'
+      + '<div class="ci-subtotal">$' + item.subtotal.toLocaleString('es-CL') + '</div>'
+      + '<div class="ci-price-unit">'
+      + '<span>$' + item.precioUnit.toLocaleString('es-CL') + ' c/u</span>'
+      + '<div class="ci-controls">'
+      + '<button class="ci-qty-btn" onclick="itemQty(' + idx + ',-1)">−</button>'
+      + '<span class="ci-qty-num">' + item.cantidad + '</span>'
+      + '<button class="ci-qty-btn" onclick="itemQty(' + idx + ',1)">+</button>'
+      + '<button class="ci-del" onclick="removeItem(' + idx + ')">🗑</button>'
+      + '</div></div>'
+      + '</div>';
+  });
+  cont.innerHTML = html;
+  updateTotals();
+}
+
+function itemQty(idx, d) {
+  var item = carrito[idx];
+  if (!item) return;
+  var maxStock = item.tipo === 'agua'
+    ? 20
+    : ((inventario[item.marca] && inventario[item.marca][item.kg] !== undefined) ? parseInt(inventario[item.marca][item.kg]) : 999);
+  item.cantidad = Math.max(1, Math.min(maxStock, item.cantidad + d));
+  item.subtotal = item.cantidad * item.precioUnit;
+  renderCart(); updateBadge();
+}
+
+function removeItem(idx) {
+  carrito.splice(idx, 1);
+  if (!carrito.length) descuento = null;
+  renderCart(); updateBadge();
+}
+
+function updateBadge() {
+  document.getElementById('cartBadge').textContent = carrito.reduce(function(s,i){ return s + i.cantidad; }, 0);
+}
+
+function bumpBadge() {
+  var badge = document.getElementById('cartBadge');
+  badge.classList.remove('bump'); void badge.offsetWidth; badge.classList.add('bump');
+  setTimeout(function(){ badge.classList.remove('bump'); }, 350);
+}
+
+// ══════════════════════════════════════════════════════════════
+// TOTALES
+// ══════════════════════════════════════════════════════════════
+function esVale(pago) { return pago === 'Vale Abastible' || pago === 'Vale Gasco'; }
+
+function actualizarCargoVales() {
+  var pagoSel = document.querySelector('input[name="pago"]:checked');
+  var pago    = pagoSel ? pagoSel.value : 'Efectivo';
+  var aviso   = document.getElementById('valesAviso');
+  if (aviso) aviso.style.display = esVale(pago) ? 'block' : 'none';
+  updateTotals();
+}
+
+function updateTotals() {
+  var subtotal = carrito.reduce(function(s,i){ return s + i.subtotal; }, 0);
+  var descAmt  = 0;
+  if (descuento) { descAmt = descuento.tipo === 'porcentaje' ? Math.round(subtotal * descuento.valor / 100) : descuento.valor; }
+  var pagoSel    = document.querySelector('input[name="pago"]:checked');
+  var pago       = pagoSel ? pagoSel.value : 'Efectivo';
+  var cargoVales = esVale(pago) ? 500 : 0;
+  var total      = subtotal - descAmt + cargoVales;
+
+  document.getElementById('totSubtotal').textContent = '$' + subtotal.toLocaleString('es-CL');
+  document.getElementById('totTotal').textContent    = '$' + total.toLocaleString('es-CL');
+
+  var dr = document.getElementById('discRow');
+  if (descAmt > 0) {
+    dr.style.display = 'flex';
+    document.getElementById('discRowLbl').textContent = '🏷️ ' + (descuento.descripcion || 'Descuento');
+    document.getElementById('discRowAmt').textContent = '-$' + descAmt.toLocaleString('es-CL');
+  } else { dr.style.display = 'none'; }
+
+  var vr = document.getElementById('valesRow');
+  if (vr) vr.style.display = cargoVales ? 'flex' : 'none';
+}
+
+// ══════════════════════════════════════════════════════════════
+// DESCUENTO
+// ══════════════════════════════════════════════════════════════
+function applyDisc() {
+  var codigo = document.getElementById('discInp').value.trim();
+  if (!codigo) return;
+  gasCall('validarDescuento', { codigo: codigo })
+    .then(function(res) {
+      if (res.ok) {
+        descuento = res.descuento; descuento.codigo = codigo;
+        document.getElementById('discFormWrap').style.display = 'none';
+        document.getElementById('discApplied').style.display  = 'block';
+        document.getElementById('discLbl').textContent = res.descuento.descripcion;
+        document.getElementById('discMsg').textContent = '';
+        updateTotals(); toast('✅ ' + res.descuento.descripcion, 'ok');
+      } else {
+        var m = document.getElementById('discMsg');
+        m.className = 'disc-msg err'; m.textContent = '❌ ' + res.error;
+      }
+    })
+    .catch(function(){ toast('Error al validar código', 'err'); });
+}
+
+function removeDisc() {
+  descuento = null;
+  document.getElementById('discFormWrap').style.display = 'block';
+  document.getElementById('discApplied').style.display  = 'none';
+  document.getElementById('discInp').value = '';
+  document.getElementById('discMsg').textContent = '';
+  updateTotals();
+}
+
+// ══════════════════════════════════════════════════════════════
+// CHECKOUT
+// ══════════════════════════════════════════════════════════════
+function openCheckout() {
+  if (!carrito.length) { toast('Tu carrito está vacío', 'err'); return; }
+  var subtotal   = carrito.reduce(function(s,i){ return s + i.subtotal; }, 0);
+  var descAmt    = descuento ? (descuento.tipo === 'porcentaje' ? Math.round(subtotal * descuento.valor / 100) : descuento.valor) : 0;
+  var pagoSel    = document.querySelector('input[name="pago"]:checked');
+  var pago       = pagoSel ? pagoSel.value : 'Efectivo';
+  var cargoVales = esVale(pago) ? 500 : 0;
+  var total      = subtotal - descAmt + cargoVales;
+
+  var mH = carrito.map(function(i){
+    return '<div class="mini-item"><span>' + i.nombre + ' ×' + i.cantidad + '</span><span>$' + i.subtotal.toLocaleString('es-CL') + '</span></div>';
+  }).join('');
+  if (descAmt > 0) mH += '<div class="mini-item" style="color:var(--success)"><span>Descuento</span><span>-$' + descAmt.toLocaleString('es-CL') + '</span></div>';
+  if (cargoVales) mH += '<div class="mini-item" style="color:var(--warn)"><span>🎟️ Cargo vale</span><span>+$500</span></div>';
+
+  document.getElementById('miniItems').innerHTML = mH;
+  document.getElementById('miniTotal').textContent = '$' + total.toLocaleString('es-CL') + ' CLP';
+  document.getElementById('checkoutForm').style.display  = 'block';
+  document.getElementById('confirmScreen').style.display = 'none';
+  document.getElementById('modalBack').classList.add('open');
+  document.getElementById('cartOverlay').classList.remove('open');
+}
+
+function closeModal() { document.getElementById('modalBack').classList.remove('open'); }
+
+function confirmOrder() {
+  var nombre = document.getElementById('fNombre').value.trim();
+  var tel    = document.getElementById('fTel').value.trim();
+  var email  = document.getElementById('fEmail').value.trim();
+  var dir    = document.getElementById('fDir').value.trim();
+  var pago   = document.querySelector('input[name="pago"]:checked');
+  var obs    = document.getElementById('fObs').value.trim();
+
+  if (!nombre || !tel || !dir) { toast('Nombre, teléfono y dirección son obligatorios', 'err'); return; }
+
+  var subtotal   = carrito.reduce(function(s,i){ return s + i.subtotal; }, 0);
+  var descAmt    = descuento ? (descuento.tipo === 'porcentaje' ? Math.round(subtotal * descuento.valor / 100) : descuento.valor) : 0;
+  var metodoPago = pago ? pago.value : 'Efectivo';
+  var cargoVales = esVale(metodoPago) ? 500 : 0;
+  var totalFinal = subtotal - descAmt + cargoVales;
+
+  // Enriquecer items con tipo_servicio para compatibilidad backend
+  var payload = {
+    nombre: nombre, email: email, telefono: tel, direccion: dir,
+    metodoPago: metodoPago, observaciones: obs,
+    items: carrito.map(function(i) {
+      return {
+        tipo_servicio: i.tipo,         // 'gas' | 'agua'
+        marca: i.tipo === 'gas' ? i.marca : '',
+        kg: i.kg, nombre: i.nombre,
+        precioUnit: i.precioUnit, cantidad: i.cantidad, subtotal: i.subtotal
+      };
+    }),
+    subtotal: subtotal, descuento: descAmt,
+    cargoVales: cargoVales, total: totalFinal,
+    tipoDescuento: descuento ? descuento.descripcion : '',
+    codigoDescuento: descuento ? (descuento.codigo || '') : ''
+  };
+
+  showLoader(true, 'Procesando tu pedido…');
+  gasCall('crearPedido', { payload: payload })
+    .then(function(res) {
+      showLoader(false);
+      if (res.ok) {
+        pedidoIDConfirmado = res.pedidoID;
+        document.getElementById('confirmID').textContent = res.pedidoID;
+        document.getElementById('checkoutForm').style.display  = 'none';
+        document.getElementById('confirmScreen').style.display = 'block';
+        carrito = []; descuento = null;
+        renderCart(); updateBadge();
+        toast('🎉 Pedido ' + res.pedidoID + ' confirmado', 'ok');
+        gasCall('getInventario').then(function(inv){ inventario = inv; renderProducts(); });
+      } else {
+        toast('Error: ' + (res.error || 'Inténtalo de nuevo'), 'err');
+      }
+    })
+    .catch(function(e){ showLoader(false); toast('Error de conexión: ' + e, 'err'); });
+}
+
+function waConfirm() {
+  window.open('https://wa.me/56961830331?text=' + encodeURIComponent('Hola, quiero seguimiento de mi pedido ' + pedidoIDConfirmado), '_blank');
+}
+
+// ══════════════════════════════════════════════════════════════
+// ADMIN MODAL (click 5 veces en footer)
+// ══════════════════════════════════════════════════════════════
+function adminClick() {
+  adminClicks++;
+  clearTimeout(adminTimer);
+  adminTimer = setTimeout(function(){ adminClicks = 0; }, 2000);
+  if (adminClicks >= 5) { adminClicks = 0; abrirEstadoModal(); }
+}
+
+function abrirEstadoModal() {
+  document.getElementById('estadoModalBack').classList.add('open');
+  document.getElementById('estadoInfo').style.display  = 'none';
+  document.getElementById('estadoBtns').style.display  = 'none';
+  document.getElementById('adminPedidoID').value = '';
+  pedidoAdminActual = null;
+}
+
+function cerrarEstadoModal() { document.getElementById('estadoModalBack').classList.remove('open'); }
+
+function buscarPedidoAdmin() {
+  var id = document.getElementById('adminPedidoID').value.trim().toUpperCase();
+  if (!id) { toast('Ingresa un número de pedido', 'err'); return; }
+  showLoader(true, 'Buscando pedido…');
+  gasCall('getPedidoPorID', { pedidoID: id })
+    .then(function(pedido) {
+      showLoader(false);
+      if (!pedido) { toast('Pedido no encontrado', 'err'); return; }
+      pedidoAdminActual = pedido;
+      var estadoColor = { Pendiente: '#856404', 'En camino': '#0C5460', Entregado: '#155724', Cancelado: '#721C24' };
+      var estadoBg    = { Pendiente: '#FFF3CD', 'En camino': '#D1ECF1', Entregado: '#D4EDDA',  Cancelado: '#F8D7DA' };
+      var est = pedido['Estado'] || '';
+      var infoEl = document.getElementById('estadoInfo');
+      infoEl.style.display = 'block';
+      infoEl.innerHTML = '<strong>Pedido:</strong> ' + id + '<br>'
+        + '<strong>Cliente:</strong> ' + (pedido['Nombre Cliente'] || '') + '<br>'
+        + '<strong>Teléfono:</strong> ' + (pedido['Teléfono'] || '') + '<br>'
+        + '<strong>Dirección:</strong> ' + (pedido['Dirección'] || '') + '<br>'
+        + '<strong>Estado actual:</strong> <span style="background:' + (estadoBg[est] || '#eee') + ';color:' + (estadoColor[est] || '#333')
+        + ';padding:2px 9px;border-radius:20px;font-weight:700">' + (est || '—') + '</span>';
+      document.getElementById('estadoBtns').style.display = 'block';
+    })
+    .catch(function(e){ showLoader(false); toast('Error: ' + e, 'err'); });
+}
+
+function cambiarEstado(nuevoEstado) {
+  if (!pedidoAdminActual) { toast('Busca un pedido primero', 'err'); return; }
+  var id = document.getElementById('adminPedidoID').value.trim().toUpperCase();
+  var enviarPDF = document.getElementById('enviarPDF').checked;
+  showLoader(true, 'Actualizando estado…');
+  gasCall('actualizarEstadoConPDF', { pedidoID: id, nuevoEstado: nuevoEstado, enviarPDF: enviarPDF })
+    .then(function(res) {
+      showLoader(false);
+      if (res.ok) { toast('✅ Estado cambiado a "' + nuevoEstado + '"', 'ok'); cerrarEstadoModal(); }
+      else { toast('Error: ' + (res.error || 'Inténtalo de nuevo'), 'err'); }
+    })
+    .catch(function(e){ showLoader(false); toast('Error: ' + e, 'err'); });
+}
+
+// ══════════════════════════════════════════════════════════════
+// UI HELPERS
+// ══════════════════════════════════════════════════════════════
+function toggleCart() { document.getElementById('cartOverlay').classList.toggle('open'); }
+function closeCartOutside(e) { if (e.target === document.getElementById('cartOverlay')) toggleCart(); }
+function goto(sel) { var el = document.querySelector(sel); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+function wa() { window.open('https://wa.me/56961830331?text=' + encodeURIComponent('Hola, me gustaría hacer un pedido de gas.'), '_blank'); }
+
+function setActivePill(btn) {
+  document.querySelectorAll('.cat-pill').forEach(function(p){ p.classList.remove('active'); });
+  btn.classList.add('active');
+}
+
+function abrirMapa() {
+  var dir = encodeURIComponent('Alejandro Ávalos Davidson 2059, Macul, Santiago, Chile');
+  var ua  = navigator.userAgent.toLowerCase();
+  var url;
+  if (/iphone|ipad|ipod/.test(ua))   url = 'maps://maps.apple.com/?q=' + dir;
+  else if (/android/.test(ua))        url = 'geo:0,0?q=' + dir;
+  else                                 url = 'https://www.google.com/maps/search/?api=1&query=' + dir;
+  window.open(url, '_blank');
+}
+
+function showLoader(show, txt) {
+  var l = document.getElementById('loader');
+  l.classList.toggle('show', show);
+  if (txt) document.getElementById('loaderTxt').textContent = txt;
+}
+
+function toast(msg, tipo) {
+  var w = document.getElementById('toasts');
+  var d = document.createElement('div');
+  d.className = 'toast ' + (tipo || '');
+  d.innerHTML = (tipo === 'ok' ? '✅' : tipo === 'err' ? '❌' : 'ℹ️') + ' <span>' + msg + '</span>';
+  w.appendChild(d);
+  setTimeout(function(){ d.style.opacity = '0'; d.style.transition = 'opacity .4s'; setTimeout(function(){ d.remove(); }, 400); }, 3600);
+}
+</script>
+</body>
+</html>
