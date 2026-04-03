@@ -328,7 +328,7 @@ body::before {
 // ══════════════════════════════════════════════
 // CONFIG
 // ══════════════════════════════════════════════
-var GAS_URL       = 'https://script.google.com/macros/s/AKfycbxnAGjgYrtwOiK-Q3StwynACb5eYZfMhRGajlsvaH16UZMSqA67GswfAFNrYI3IoUEt/exec';
+var GAS_URL       = 'https://script.google.com/macros/s/AKfycbwUsE2LMWb4g_kiNg_IRWKzjb61spJ-Oby9UNkfvA3s81ZOXFimFpYoY7cHG4Bmhmmp/exec';
 var REFRESH_SECS  = 30;   // auto-refresh interval
 
 var countdown    = REFRESH_SECS;
@@ -352,37 +352,36 @@ function gasCall(accion, params) {
 // HELPERS
 // ══════════════════════════════════════════════
 function formatProductTags(pedido) {
-  var items = pedido['Items JSON'] || pedido['items_json'] || '';
-  var tags  = [];
+  var detalle = pedido['Detalle Pedido'] || '';
+  var tags    = [];
 
-  if (items) {
-    try {
-      var arr = JSON.parse(items);
-      arr.forEach(function(i) {
-        var tipo  = i.tipo_servicio || 'gas';
-        var label = '';
-        if (tipo === 'agua') {
-          label = '💧 ' + (i.nombre || 'Agua') + ' ×' + i.cantidad;
-          tags.push({ label: label, cls: 'agua' });
-        } else {
-          // Format: "PENDIENTE 15KG AB" style
-          var marca   = i.marca || '';
-          var marcaAb = marca.toLowerCase().includes('abastible') ? 'AB' : marca.toLowerCase().includes('gasco') ? 'GAS' : marca.substring(0,3).toUpperCase();
-          var kg      = i.kg || '';
-          label = 'PENDIENTE ' + kg + 'KG ' + marcaAb + ' ×' + i.cantidad;
-          tags.push({ label: label, cls: '' });
-        }
-      });
-    } catch(e) { tags.push({ label: items, cls: '' }); }
-  } else {
-    // Fallback from flat columns
-    var marca  = pedido['Marca'] || '';
-    var kg     = pedido['KG'] || '';
-    var cant   = pedido['Cantidad'] || 1;
-    var marcaAb = marca.toLowerCase().includes('abastible') ? 'AB' : marca.toLowerCase().includes('gasco') ? 'GAS' : marca.substring(0,3).toUpperCase();
-    if (kg) tags.push({ label: 'PENDIENTE ' + kg + 'KG ' + marcaAb + ' ×' + cant, cls: '' });
-    else tags.push({ label: pedido['Resumen Items'] || '—', cls: '' });
+  if (detalle) {
+    var lineas = String(detalle).split('\n').filter(function(l) {
+      return l && !l.startsWith('──') && !l.startsWith('SUBTOTAL');
+    });
+    lineas.forEach(function(l) {
+      // Formato: "1x Gas Abastible 15kg ($12.000) = $12.000"
+      var m = l.match(/^(\d+)x\s+(.+?)(?:\s+\(|$)/);
+      if (!m) return;
+      var cant   = m[1];
+      var nombre = m[2].trim();
+      var esAgua = nombre.toLowerCase().includes('agua') || nombre.toLowerCase().includes('bidón');
+      if (esAgua) {
+        tags.push({ label: '💧 ' + nombre + ' ×' + cant, cls: 'agua' });
+      } else {
+        // Extraer marca y kg del nombre para formato "15KG AB ×1"
+        var kgM  = nombre.match(/(\d+)\s*kg/i);
+        var kg   = kgM ? kgM[1] : '';
+        var marcaAb = nombre.toLowerCase().includes('abastible') ? 'AB'
+                    : nombre.toLowerCase().includes('gasco') ? 'GAS'
+                    : '';
+        var label = kg ? kg + 'KG ' + marcaAb + ' ×' + cant : nombre + ' ×' + cant;
+        tags.push({ label: label, cls: '' });
+      }
+    });
   }
+
+  if (!tags.length) tags.push({ label: '—', cls: '' });
   return tags;
 }
 
@@ -406,12 +405,12 @@ function nowStr() {
 // RENDER CARD
 // ══════════════════════════════════════════════
 function buildCardHTML(p) {
-  var id     = p['ID Pedido'] || p['Pedido ID'] || '—';
+  var id     = p['Número de Pedido'] || p['ID Pedido'] || '—';
   var nombre = p['Nombre Cliente'] || '—';
   var tel    = p['Teléfono'] || '—';
   var dir    = p['Dirección'] || '—';
-  var pago   = p['Método Pago'] || p['Metodo Pago'] || '';
-  var total  = fmtClp(p['Total'] || 0);
+  var pago   = p['Método de Pago'] || p['Método Pago'] || '';
+  var total  = fmtClp(p['Total CLP'] || p['Total'] || 0);
   var obs    = p['Observaciones'] || '';
   var tags   = formatProductTags(p);
 
@@ -458,9 +457,15 @@ function fetchPedidos() {
     .then(function(res) {
       document.getElementById('loadingState').style.display = 'none';
 
-      var pedidos = (res && Array.isArray(res.pedidos))
-        ? res.pedidos.filter(function(p){ return p['Estado'] === 'Pendiente'; })
-        : [];
+      var lista;
+      if (Array.isArray(res)) {
+        lista = res;
+      } else if (res && Array.isArray(res.pedidos)) {
+        lista = res.pedidos;
+      } else {
+        lista = [];
+      }
+      var pedidos = lista.filter(function(p){ return p['Estado'] === 'Pendiente'; });
 
       renderPedidos(pedidos);
       document.getElementById('lastUpdate').textContent = nowStr();
@@ -490,7 +495,7 @@ function renderPedidos(pedidos) {
 
   // Build set of incoming IDs
   var incomingIds = {};
-  pedidos.forEach(function(p) { incomingIds[p['ID Pedido'] || ''] = p; });
+  pedidos.forEach(function(p) { incomingIds[p['Número de Pedido'] || ''] = p; });
 
   // Remove cards that are no longer pending
   Object.keys(currentCards).forEach(function(id) {
@@ -504,7 +509,7 @@ function renderPedidos(pedidos) {
 
   // Add new cards (not already shown)
   pedidos.forEach(function(p, idx) {
-    var id = p['ID Pedido'] || '';
+    var id = p['Número de Pedido'] || '';
     if (!currentCards[id]) {
       var div = document.createElement('div');
       div.className = 'order-card';
