@@ -299,7 +299,7 @@ body::before {
 
     <div class="refresh-info">
       Actualiza en<br>
-      <span class="next-refresh" id="countdown">—</span>s
+      <span class="next-refresh"><span id="contador">30</span>s</span>
     </div>
   </div>
 </div>
@@ -331,9 +331,8 @@ body::before {
 var GAS_URL       = 'https://script.google.com/macros/s/AKfycbwUsE2LMWb4g_kiNg_IRWKzjb61spJ-Oby9UNkfvA3s81ZOXFimFpYoY7cHG4Bmhmmp/exec';
 var REFRESH_SECS  = 30;   // auto-refresh interval
 
-var countdown    = REFRESH_SECS;
-var countTimer   = null;
 var currentCards = {};    // { id: cardElement } — track existing cards
+var tiempoRestante = REFRESH_SECS;
 
 // ══════════════════════════════════════════════
 // API
@@ -528,15 +527,23 @@ function renderPedidos(pedidos) {
 // ══════════════════════════════════════════════
 // COUNTDOWN TIMER
 // ══════════════════════════════════════════════
-function startCountdown() {
-  countdown = REFRESH_SECS;
-  clearInterval(countTimer);
-  countTimer = setInterval(function() {
-    countdown--;
-    document.getElementById('countdown').textContent = countdown;
-    if (countdown <= 0) {
-      countdown = REFRESH_SECS;
-      fetchPedidos();
+function startRefreshCountdown() {
+  var contadorEl = document.getElementById('contador');
+  if (contadorEl) {
+    contadorEl.textContent = tiempoRestante;
+  }
+
+  setInterval(function() {
+    tiempoRestante--;
+
+    var elemento = document.getElementById('contador');
+    if (elemento) {
+      elemento.innerText = tiempoRestante;
+    }
+
+    if (tiempoRestante <= 0) {
+      console.log('Actualizando pedidos de Tu Gas...');
+      location.reload();
     }
   }, 1000);
 }
@@ -546,19 +553,14 @@ function startCountdown() {
 // ══════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', function() {
   fetchPedidos();
-  startCountdown();
+  startRefreshCountdown();
 
   // Keep screen awake (best-effort)
   if ('wakeLock' in navigator) {
     navigator.wakeLock.request('screen').catch(function(){});
   }
-
-  // Click countdown to refresh now
-  document.getElementById('countdown').addEventListener('click', function() {
-    countdown = REFRESH_SECS;
-    fetchPedidos();
-  });
 });
 </script>
 </body>
 </html>
+
