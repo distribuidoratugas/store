@@ -633,63 +633,27 @@ footer { background: var(--dark); color: rgba(255,255,255,.5); padding: 40px 20p
         </div>
       </div>
 
-      <!-- AGUA SECTION -->
-<section class="section sec-surface" id="agua">
-  <div class="container">
-    <div class="sec-head">
-      <h2>💧 Bidones de <span style="color:var(--agua-dk)">Agua</span></h2>
-      <p>Agua purificada 20L a domicilio. Entrega junto a tu pedido de gas.</p>
-    </div>
-    <div class="water-grid" id="waterGrid">
-      <!-- Cards de agua se generan dinámicamente o estáticas aquí -->
-      <div class="water-card" id="waterCard_premium">
+      <div class="water-card" id="waterCard_essential">
         <img class="water-card-img"
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRYEF_7fkAwgcgacJtgWQjnoMn43rhv1jSda-at7VanU_jwoAUTOVWbn60CMaERl5Fzzo-GX64x-wfMY8gyFGM_Nty0WNthCApA2CEtFarLWvu5G-LCLezFz_YL1HY2QB_LFT74uEWIJkXFUI29DxiFcAPcPf2DktmFqiyfC6Wox0-hsu_eTZ0Hy9yUgAEsX-aL7fSzMpFfu3IrbGfh6K3GQIXNd4qqLUPjl3fZtrFUYZFdtzYIW6TXUfNpO8hRdfw2NvC7V3_XGzv"
-          alt="Bidón Premium 20L"
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8_TmfQpq7EuMMPlg2YnrDPV_M6_q120sMRuq--7pbKjJG3IFJmv0a3NLcUj28TN7OW3duBMEH_oVQUXFum6xZL-KuUJ6QyMnBXgLMRRZ1o4cds9a8wLNa8QrsA3ADmS0Zp7vHZMWarWmixh5tzazkNV9l9SlFQXNf76jOQU0QKQzRR9fhKNEyQfHIL5O5lPh3cT25d3wFWyxWVbn_lpK7fLT9aJXt6pnSxmEV-m4w-gTyXCr0c2YdmMK1qYQ54SrCELTeXDO6jKf0"
+          alt="Bidón Essential 20L"
           onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 80 100%22><text y=%2260%22 font-size=%2260%22>💧</text></svg>'">
         <div class="water-card-body">
-          <span class="water-badge">PREMIUM</span>
-          <div class="water-card-name">Agua Premium 20L</div>
-          <div class="water-card-desc">Triple filtrado con equilibrio mineral perfecto.</div>
-          <div class="water-card-price">$4.500</div>
+          <span class="water-badge" style="background:var(--muted)">ECONÓMICO</span>
+          <div class="water-card-name">Agua Essential 20L</div>
+          <div class="water-card-desc">Opción económica para consumo diario familiar.</div>
+          <div class="water-card-price">$3.200</div>
           <div class="qty-row" style="margin-bottom:10px">
-            <button class="qty-btn" onclick="changeQtyWater('wqty_premium',-1)">−</button>
-            <input class="qty-inp" id="wqty_premium" type="number" value="1" min="1" max="20">
-            <button class="qty-btn" onclick="changeQtyWater('wqty_premium',1)">+</button>
+            <button class="qty-btn" onclick="changeQtyWater('wqty_essential',-1)">−</button>
+            <input class="qty-inp" id="wqty_essential" type="number" value="1" min="1" max="20">
+            <button class="qty-btn" onclick="changeQtyWater('wqty_essential',1)">+</button>
           </div>
-          <button class="add-btn agua-btn" onclick="addWaterToCart('Agua Premium 20L',4500,'wqty_premium')">💧 Agregar al carrito</button>
+          <button class="add-btn agua-btn" onclick="addWaterToCart('Agua Essential 20L',3200,'wqty_essential')">💧 Agregar al carrito</button>
         </div>
       </div>
+    </div>
   </div>
 </section>
-
-<!-- OTROS SERVICIOS -->
-<section class="section sec-white" id="servicios">
-  <div class="container">
-    <div class="sec-head">
-      <h2>🔧 Otros <span class="accent">Servicios</span></h2>
-      <p>También conectamos con servicios para tu hogar.</p>
-    </div>
-    <div class="services-grid">
-      <a class="service-card" href="https://wa.me/56961830331?text=Hola%2C+necesito+gasfitería" target="_blank">
-        <span class="service-icon">🪛</span>
-        <div class="service-name">Gasfitería</div>
-        <div class="service-desc">Instalaciones y reparaciones de gas y agua</div>
-        <span class="service-chip chip-externo">VÍA WHATSAPP</span>
-      </a>
-      <a class="service-card" href="https://wa.me/56961830331?text=Hola%2C+necesito+una+reparación" target="_blank">
-        <span class="service-icon">🔩</span>
-        <div class="service-name">Reparaciones</div>
-        <div class="service-desc">Arreglos menores en el hogar</div>
-        <span class="service-chip chip-externo">VÍA WHATSAPP</span>
-      </a>
-      <a class="service-card" href="https://wa.me/56961830331?text=Hola%2C+necesito+electricidad" target="_blank">
-        <span class="service-icon">⚡</span>
-        <div class="service-name">Electricidad</div>
-        <div class="service-desc">Mantención e instalaciones eléctricas</div>
-        <span class="service-chip chip-externo">VÍA WHATSAPP</span>
-      </a>
-      <!-- ARRIENDO GLOBO — preparado para proyecto separado -->
 
 <!-- OTROS SERVICIOS -->
 <section class="section sec-white" id="servicios">
